@@ -9,43 +9,6 @@
   <p id="piano_text"></p>
   <p id="nanny_door_text"></p>
 
-  <!--Room navigatie Knoppen -->
-  <button onclick="previousRoom()"><</button>
-  <button onclick="nextRoom()">></button>
 
-  <script>
-      const rooms = [
-          "hallway_interactable_texts.html",
-          "living_room_interactable_texts.html",
-          "movement_buttons_base.html",
-          "nursery.html"
-      ];
-
-      // Zoek in welke pagina (room) we momenteel zitten
-      let currentIndex = rooms.findIndex(room =>
-          window.location.href.includes(room) // checkt of de URL deze bestandsnaam bevat
-      );
-
-      // Functie om naar de volgende pagina te gaan
-      function nextRoom() {
-          // +1 = volgende pagina
-          // % rooms.length = zorgt dat we terug naar het begin gaan als we op het einde zitten
-          let nextIndex = (currentIndex + 1) % rooms.length;
-
-          // Ga naar die pagina
-          window.location.href = rooms[nextIndex];
-      }
-
-      // Functie om naar de vorige pagina te gaan
-      function previousRoom() {
-          // -1 = vorige pagina
-          // + rooms.length = voorkomt negatieve index
-          // % rooms.length = zorgt dat we naar het einde gaan als we op het begin zitten
-          let prevIndex = (currentIndex - 1 + rooms.length) % rooms.length;
-
-          // Ga naar die pagina
-          window.location.href = rooms[prevIndex];
-      }
-  </script>
 </body>
 </html>
