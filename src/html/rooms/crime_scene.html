@@ -13,13 +13,24 @@
 
     <div class="room-background"></div>
     <h1>Crime Scene</h1>
+
+    <div class="interactable-layer">
+        <!-- Forensic Hotspots -->
+        <div id="obj-body" class="clickable-object" onclick="showInteraction('body')" title="Amelia Souvellier" style="top: 60%; left: 35%; width: 30%; height: 25%;"></div>
+        <div id="obj-glass" class="clickable-object" onclick="showInteraction('broken_glass')" title="Broken Glass" style="top: 75%; left: 70%; width: 10%; height: 10%;"></div>
+        <div id="obj-safe" class="clickable-object" onclick="showInteraction('locked_safe')" title="Open Safe" style="top: 30%; left: 80%; width: 15%; height: 20%;"></div>
+    </div>
+
     <div id="dialog-container"></div>
 
-    <!-- UI Buttons according to Chapter 1 Template -->
-    <button class="btn btn-primary ui-button position-fixed bottom-0 start-50 translate-middle-x mb-3" id="btn-bottom" onclick="goToLocation('hallway.html')">v</button>
+    <!-- UI Buttons -->
+    <button class="btn btn-primary ui-button position-fixed bottom-0 start-50 translate-middle-x mb-4" id="btn-bottom" onclick="goToLocation('hallway.html')">v</button>
 
     <script src="../../js/components/movement.js"></script>
+    <script src="../../js/components/audio.js"></script>
+    <script src="../../js/components/tablet_widget.js"></script>
     <script src="../../js/data/dialogs.js"></script>
     <script src="../../js/components/dialog.js"></script>
+    <script src="../../js/components/dynamic_loading.js"></script>
 </body>
 </html>

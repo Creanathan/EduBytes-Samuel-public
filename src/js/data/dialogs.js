@@ -24,12 +24,12 @@ const DIALOGS = {
 
     hallway: [
         {
-            speaker: "Dorian (Butler)",
+            speaker: "Jeanne-Paul Leduc (Butler)",
             lines: [
                 "Bonjour. Are you the private investigator monsieur Souvellier called for?",
                 "Let me see your detective licence... All right, everything seems to be in order.",
                 "Unfortunately, I am somewhat occupied at the moment due to the... circumstances.",
-                "I am Dorian, by the way. I have served this family for the last 15 years.",
+                "I am Jeanne-Paul Leduc, by the way. I have served this family for the last 15 years.",
                 "Now, please wait in the hallway. I will be with you shortly."
             ],
             options: [
@@ -54,7 +54,7 @@ const DIALOGS = {
 
     nursery: [
         {
-            speaker: "Beatrix Lémur (Nanny)",
+            speaker: "Beatrix Lemur",
             lines: [
                 "Could you please turn off the lights when leaving?",
                 "Taking care of mademoiselle Camille is difficult enough already without strangers trying to find their way around the house...",
@@ -66,7 +66,20 @@ const DIALOGS = {
         }
     ],
 
-    crime_scene: [],
+    crime_scene: [
+        {
+            speaker: "Det. Louis Dekoning",
+            lines: [
+                "The air in here is heavy... colder than the rest of the house.",
+                "And there she is. Amelia Souvellier. Found earlier this morning by the butler.",
+                "I need to be careful. Every misplaced footprint could cost us the case.",
+                "Time to look for anything the police might have missed."
+            ],
+            options: [
+                { label: "Investigate", action: "exit" }
+            ]
+        }
+    ],
 
     nannys_room: [],
 
@@ -88,9 +101,9 @@ const DIALOGS = {
             lines: ["I shouldn't waste any time playing a tune. There is a murderer on the loose."],
             options: [{ label: "Close", action: "exit" }]
         },
-        door_nanny: {
+        door_nursery: {
             speaker: "Det. Louis Dekoning",
-            lines: ["Locked. Typical.", "Best to ask the butler for a key later."],
+            lines: ["The Nursery door. Locked.", "Dorian probably has the key. I should search for another way in or ask him."],
             options: [{ label: "Close", action: "exit" }]
         },
         cradle: {
@@ -101,6 +114,31 @@ const DIALOGS = {
         family_picture: {
             speaker: "Det. Louis Dekoning",
             lines: ["The Dégrasse family. They seem... close. At least in this frame.", "Wait, is that the Nanny in the corner with the buggy?"],
+            options: [{ label: "Close", action: "exit" }]
+        },
+        body: {
+            speaker: "Det. Louis Dekoning",
+            lines: [
+                "Amelia Souvellier. Still wearing her evening gown.",
+                "There is a strange discoloration around her lips...",
+                "This wasn't a natural death."
+            ],
+            options: [{ label: "Close", action: "exit" }]
+        },
+        broken_glass: {
+            speaker: "Det. Louis Dekoning",
+            lines: [
+                "A crystal wine glass shard. There's a sticky residue on it.",
+                "I should keep this. It might contain traces of whatever was in that drink."
+            ],
+            options: [{ label: "Close", action: "exit" }]
+        },
+        locked_safe: {
+            speaker: "Det. Louis Dekoning",
+            lines: [
+                "The safe is empty. Thomas said his mother kept the family database ledgers here.",
+                "If someone took those, they were looking for more than just money."
+            ],
             options: [{ label: "Close", action: "exit" }]
         }
     }

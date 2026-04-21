@@ -71,11 +71,18 @@
     hintEl.id = "dialog-hint";
     hintEl.style.cssText = `
         text-align: right;
-        font-size: 12px;
-        color: #666;
+        font-size: 11px;
+        color: rgba(255,255,255,0.35);
         margin-top: 10px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
     `;
-    hintEl.textContent = "▼ Click to continue";
+
+    hintEl.appendChild(document.createTextNode("Click to continue"));
 
     const optionsEl = document.createElement("div");
     optionsEl.id = "dialog-options";

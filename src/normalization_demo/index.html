@@ -3,70 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Police OS - Database Normalization (1NF)</title>
-    <!-- Bootstrap CSS for Edge Buttons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Police OS - Case File Database</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .translate-middle-x { transform: translateX(-50%); }
-    </style>
 </head>
 <body>
 
-    <!-- Back to Room Button -->
-    <button class="btn btn-dark position-fixed top-0 start-50 translate-middle-x mt-3 z-3" style="z-index: 1050;" id="btn-top" onclick="goBack()">^</button>
+    <!-- Android Tablet Shell -->
+    <div class="tablet-shell">
 
-    <div class="tablet-container mt-5">
-        <h1>Case Mansion - Police OS</h1>
-
-        <div id="error-banner" class="error-banner">
-            [SYS_ERR_1NF] Error opening database: multiple entries in one cell.
-            <br><small>Click on the corrupted data cells to atomicize the values.</small>
+        <!-- Top Bezel with Camera -->
+        <div class="tablet-bezel-top">
+            <div class="tablet-camera"></div>
         </div>
 
-        <table id="police-db">
-            <thead>
-                <tr>
-                    <th>Log_ID</th>
-                    <th>Officer</th>
-                    <th>Searched_Rooms</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data is populated via logic.js -->
-            </tbody>
-        </table>
+        <!-- The Screen -->
+        <div class="tablet-screen">
 
-        <!-- Hidden Reward Section (Pop-up inside the tablet) -->
-        <div id="reward-section" class="reward-section">
-            <h3>[DECRYPTED_ENTRY]</h3>
-            <p>Hidden contact details recovered from database:</p>
-            <p>> <strong>Subject:</strong> "Nanny" (Beatrix Lémur)</p>
-            <p>> <strong>Status:</strong> Person of Interest</p>
-            <p>> <strong>Phone:</strong> 555-019-2814</p>
-            
-            <button class="btn-continue" onclick="closeTablet()">Close Tablet</button>
+            <!-- Android Status Bar -->
+            <div class="android-statusbar">
+                <div class="statusbar-left">
+                    <span>POLICE OS v2.1</span>
+                    <div class="status-dot"></div>
+                    <span>SECURE</span>
+                </div>
+                <div class="statusbar-right">
+                    <span id="status-time">--:--</span>
+                    <span>⬛⬛⬛</span>
+                </div>
+            </div>
+
+            <!-- App Header -->
+            <div class="app-header">
+                <div class="app-logo">
+                    <div class="app-logo-icon">🔍</div>
+                    <div>
+                        <div class="app-title">Police OS</div>
+                        <div class="app-subtitle">Case #4412 · Mansion Investigation</div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="closeTablet()">
+                    ← Exit App
+                </button>
+            </div>
+
+            <!-- Error Banner (1NF Violation) -->
+            <div id="error-banner" class="error-banner">
+                <div class="error-icon">⚠</div>
+                <div>
+                    <div class="error-title">[SYS_ERR_1NF] Database integrity violation</div>
+                    <div>Multiple values detected in atomic cells. Tap corrupted entries to resolve.</div>
+                </div>
+            </div>
+
+            <!-- Database Section -->
+            <div class="db-section">
+                <div class="db-label">📋 Search Logs · Evidence Database</div>
+
+                <table id="police-db">
+                    <thead>
+                        <tr>
+                            <th>Log_ID</th>
+                            <th>Officer</th>
+                            <th>Searched_Rooms</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Populated via logic.js -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Hidden Reward Section -->
+            <div id="reward-section" class="reward-section">
+                <div class="reward-title">DECRYPTED ENTRY — Hidden contact recovered</div>
+                <div class="reward-row">
+                    <span class="reward-key">Subject</span>
+                    <span class="reward-value">Beatrix Lémur</span>
+                </div>
+                <div class="reward-row">
+                    <span class="reward-key">Status</span>
+                    <span class="reward-value">Person of Interest</span>
+                </div>
+                <div class="reward-row">
+                    <span class="reward-key">Phone</span>
+                    <span class="reward-value">555-019-2814</span>
+                </div>
+                <button class="btn-continue" onclick="closeTablet()">Close Tablet</button>
+            </div>
+
+        </div><!-- /tablet-screen -->
+
+        <!-- Bottom Bezel with Home Button -->
+        <div class="tablet-bezel-bottom">
+            <div class="tablet-home-btn" onclick="closeTablet()" title="Home">
+                <div style="width:12px;height:12px;border:2px solid #3a3a45;border-radius:3px;"></div>
+            </div>
         </div>
-    </div>
+
+    </div><!-- /tablet-shell -->
 
     <script src="logic.js"></script>
     <script>
-        // Go back to the previous room
-        function goBack() {
-            window.history.back();
+        // Live clock in status bar
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('status-time').textContent = h + ':' + m;
         }
+        updateClock();
+        setInterval(updateClock, 30000);
 
-        // Closes the tablet and returns to the current room
         function closeTablet() {
-            goBack();
+            // If we are in an iframe, tell the parent to close us
+            if (window !== window.parent) {
+                window.parent.postMessage({ type: 'closeTablet' }, '*');
+            } else {
+                // Standalone mode: just go back
+                window.history.back();
+            }
         }
 
-        // Listen for Up arrow
+        // Listen for Up arrow / W key / Escape
         document.addEventListener('keydown', function(event) {
-            if (event.key === "ArrowUp" || event.key === "w" || event.key === "W") {
-                goBack();
+            if (event.key === "ArrowUp" || event.key === "w" || event.key === "W" || event.key === "Escape") {
+                closeTablet();
             }
         });
     </script>
+
 </body>
 </html>
