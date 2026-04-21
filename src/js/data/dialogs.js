@@ -86,6 +86,18 @@ const DIALOGS = {
     // --- Interactive Objects (Item-specific triggers) ---
     // These keys match the ID of the clickable-object divs in the HTML
     interactions: {
+        leduc: {
+            speaker: "Jeanne-Paul Leduc (Butler)",
+            lines: [
+                "Oui? Is there something you need, detective?",
+                "The Nursery? It is locked for the children's safety, especially now.",
+                "But I suppose you must see it. Here is the spare key. Please be careful."
+            ],
+            options: [
+                { label: "Take the Key", action: "addItem:nursery_key" },
+                { label: "Thank you.", action: "exit" }
+            ]
+        },
         mirror: {
             speaker: "Det. Louis Dekoning",
             lines: ["Maybe I should've shaved. This case is already taking its toll on me."],
@@ -103,8 +115,22 @@ const DIALOGS = {
         },
         door_nursery: {
             speaker: "Det. Louis Dekoning",
-            lines: ["The Nursery door. Locked.", "Jeanne-Paul Leduc probably has the key. I should search for another way in or ask him."],
+            lines: [
+                "The Nursery door. Locked tight.", 
+                "I should ask Jeanne-Paul Leduc for the key."
+            ],
             options: [{ label: "Close", action: "exit" }]
+        },
+        door_nursery_unlocked: {
+            speaker: "Det. Louis Dekoning",
+            lines: [
+                "The Nursery door. I have the key.",
+                "Let's go inside."
+            ],
+            options: [
+                { label: "Enter", action: "goTo:nursery.html" },
+                { label: "Wait", action: "exit" }
+            ]
         },
         cradle: {
             speaker: "Det. Louis Dekoning",

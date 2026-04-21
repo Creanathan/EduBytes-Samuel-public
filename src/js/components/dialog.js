@@ -149,8 +149,21 @@
     function handleOption(action) {
         if (action === "exit") {
             moveToNextDialog();
+        } else if (action && action.startsWith("addItem:")) {
+            const itemId = action.split(":")[1];
+            if (window.Inventory) {
+                window.Inventory.addItem(itemId);
+            }
+            moveToNextDialog();
+        } else if (action && action.startsWith("goTo:")) {
+            const url = action.split(":")[1];
+            if (window.goToLocation) {
+                window.goToLocation(url);
+            } else {
+                window.location.href = url;
+            }
+            moveToNextDialog();
         }
-        // Future actions can be added here (e.g., "unlock_door", "give_item")
     }
 
     function moveToNextDialog() {

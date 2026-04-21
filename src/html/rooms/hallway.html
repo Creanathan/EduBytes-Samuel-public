@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,7 @@
         /* Positioning hotspots corrected based on actual background image */
         #obj-mirror { top: 20%; left: 5%; width: 25%; height: 75%; }
         #obj-clock { top: 25%; left: 40%; width: 10%; height: 60%; }
+        #obj-leduc { top: 35%; left: 75%; width: 10%; height: 50%; }
     </style>
 </head>
 <body>
@@ -20,19 +21,23 @@
 <div class="interactable-layer">
     <div id="obj-clock" class="clickable-object" onclick="showInteraction('clock')" title="Grandfather Clock"></div>
     <div id="obj-mirror" class="clickable-object" onclick="showInteraction('mirror')" title="Mirror"></div>
+    <!-- The Butler -->
+    <div id="obj-leduc" class="clickable-object" onclick="showInteraction('leduc')" title="Jeanne-Paul Leduc"></div>
 </div>
 
 <div id="dialog-container"></div>
 
 <!--Room navigatie Knoppen -->
 <button class="btn btn-primary ui-button position-fixed top-50 start-0 translate-middle-y ms-3" id="btn-left" onclick="goToLocation('living_room.html')"><</button>
-<button class="btn btn-primary ui-button position-fixed top-50 end-0 translate-middle-y me-3" id="btn-right" onclick="goToLocation('nursery.html')">></button>
+<button class="btn btn-primary ui-button position-fixed top-50 end-0 translate-middle-y me-3" id="btn-right" onclick="goToLocation('nursery.html', 'nursery_key')">></button>
 
 <button class="btn btn-primary ui-button position-fixed top-0 start-50 translate-middle-x mt-3" id="btn-top" onclick="goToLocation('crime_scene.html')">^</button>
 
 <script src="../../js/components/movement.js"></script>
 <script src="../../js/components/audio.js"></script>
 <script src="../../js/components/tablet_widget.js"></script>
+<script src="../../js/services/inventory.js"></script>
+<script src="../../js/components/inventory_ui.js"></script>
 <script src="../../js/data/dialogs.js"></script>
 <script src="../../js/components/dialog.js"></script>
 <script src="../../js/components/dynamic_loading.js"></script>

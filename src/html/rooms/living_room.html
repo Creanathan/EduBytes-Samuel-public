@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -19,7 +19,16 @@
 
 <div class="interactable-layer">
     <div id="obj-piano" class="clickable-object" onclick="showInteraction('piano')" title="Grand Piano"></div>
-    <div id="obj-door" class="clickable-object" onclick="showInteraction('door_nursery')" title="Nursery Door"></div>
+    <div id="obj-door" class="clickable-object" onclick="handleDoorClick()" title="Nursery Door"></div>
+    <script>
+        function handleDoorClick() {
+            if (window.Inventory && window.Inventory.hasItem('nursery_key')) {
+                showInteraction('door_nursery_unlocked');
+            } else {
+                showInteraction('door_nursery');
+            }
+        }
+    </script>
 </div>
 
 <div id="dialog-container"></div>
@@ -27,11 +36,13 @@
 <!--Room navigatie Knoppen -->
 <button class="btn btn-primary ui-button position-fixed top-50 end-0 translate-middle-y me-3" id="btn-right" onclick="goToLocation('hallway.html')">></button>
 
-<button class="btn btn-secondary ui-button position-fixed top-0 start-50 translate-middle-x mt-3" style="transform: scale(0.8) translateX(-50%);" id="btn-top" onclick="goToLocation('nursery.html')">^</button>
+<button class="btn btn-secondary ui-button position-fixed top-0 start-50 translate-middle-x mt-3" style="transform: scale(0.8) translateX(-50%);" id="btn-top" onclick="goToLocation('nursery.html', 'nursery_key')">^</button>
 
 <script src="../../js/components/movement.js"></script>
 <script src="../../js/components/audio.js"></script>
 <script src="../../js/components/tablet_widget.js"></script>
+    <script src="../../js/services/inventory.js"></script>
+    <script src="../../js/components/inventory_ui.js"></script>
 <script src="../../js/data/dialogs.js"></script>
 <script src="../../js/components/dialog.js"></script>
 <script src="../../js/components/dynamic_loading.js"></script>
