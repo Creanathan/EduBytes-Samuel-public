@@ -4,21 +4,35 @@
     <title>Hallway</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/rooms.css">
     <style>
-        .translate-middle-y { transform: translateY(-50%); }
-        .translate-middle-x { transform: translateX(-50%); }
+        .room-background { background-image: url('../../assets/rooms/hallway.png'); }
+        /* Positioning hotspots corrected based on actual background image */
+        #obj-mirror { top: 20%; left: 5%; width: 25%; height: 75%; }
+        #obj-clock { top: 25%; left: 40%; width: 10%; height: 60%; }
     </style>
 </head>
 <body>
+<div class="room-background"></div>
 <h1>Hallway</h1>
 
-<!--Room navigatie Knoppen -->
-<button class="btn btn-primary position-fixed top-50 start-0 translate-middle-y ms-3" id="btn-left" onclick="previousRoom()"><</button>
-<button class="btn btn-primary position-fixed top-50 end-0 translate-middle-y me-3" id="btn-right" onclick="nextRoom()">></button>
+<div class="interactable-layer">
+    <div id="obj-clock" class="clickable-object" onclick="showInteraction('clock')" title="Grandfather Clock"></div>
+    <div id="obj-mirror" class="clickable-object" onclick="showInteraction('mirror')" title="Mirror"></div>
+</div>
 
-<button class="btn btn-dark position-fixed bottom-0 start-50 translate-middle-x mb-3" id="btn-bottom" onclick="openTablet()">v</button>
+<div id="dialog-container"></div>
+
+<!--Room navigatie Knoppen -->
+<button class="btn btn-primary ui-button position-fixed top-50 start-0 translate-middle-y ms-3" id="btn-left" onclick="goToLocation('living_room.html')"><</button>
+<button class="btn btn-primary ui-button position-fixed top-50 end-0 translate-middle-y me-3" id="btn-right" onclick="goToLocation('nursery.html')">></button>
+
+<button class="btn btn-primary ui-button position-fixed top-0 start-50 translate-middle-x mt-3" id="btn-top" onclick="goToLocation('crime_scene.html')">^</button>
+<button class="btn btn-dark ui-button position-fixed bottom-0 start-50 translate-middle-x mb-3" id="btn-bottom" onclick="openTablet()">v</button>
 
 <script src="../../js/components/movement.js"></script>
+<script src="../../js/data/dialogs.js"></script>
+<script src="../../js/components/dialog.js"></script>
 <script src="../../js/components/dynamic_loading.js"></script>
 
 </body>

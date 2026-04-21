@@ -1,27 +1,6 @@
-const rooms = [
-    "living_room.html",
-    "hallway.html",
-    "nursery.html"
-];
-
-//Checkt of bestandsnaam bestaat
-let currentIndex = rooms.findIndex(room => window.location.href.includes(room));
-
-
-function nextRoom() {
-    let nextIndex = (currentIndex + 1) % rooms.length;
-
-    if (currentIndex < nextIndex) {
-        window.location.href = rooms[nextIndex];
-    }
-}
-
-function previousRoom() {
-    let prevIndex = (currentIndex - 1 + rooms.length) % rooms.length;
-
-    if (currentIndex > prevIndex) {
-        window.location.href = rooms[prevIndex];
-    }
+// Helper for explicit spatial routing
+function goToLocation(url) {
+    window.location.href = url;
 }
 
 // Functie om de Police Tablet te openen
@@ -34,17 +13,10 @@ function openTablet() {
     }
 }
 
-// Luister naar de pijl naar beneden op het toetsenbord
+// Luister naar de pijl naar beneden op het toetsenbord (Voor Tablet)
 document.addEventListener('keydown', function(event) {
     if (event.key === "ArrowDown" || event.key === "s" || event.key === "S") {
         openTablet();
     }
 });
-
-// Koppel de visuele "BOTTOM" knop als deze bestaat op de pagina
-document.addEventListener("DOMContentLoaded", () => {
-    const btnBottom = document.getElementById("btn-bottom");
-    if (btnBottom) {
-        btnBottom.onclick = openTablet;
-    }
-});
+

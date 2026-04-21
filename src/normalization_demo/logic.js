@@ -69,6 +69,15 @@ function splitData(index) {
     // Insert the newly generated atomic rows at the exact same location
     policeData.splice(index, 0, ...newRows);
 
+    // Optional: Recalculate Log_IDs to make them sequential as requested by user
+    policeData = policeData.map((row, i) => {
+        return {
+            log_id: `#${String(i + 1).padStart(3, '0')}`,
+            officer: row.officer,
+            searched_rooms: row.searched_rooms
+        };
+    });
+
     // Re-render the visual table
     renderTable();
 }

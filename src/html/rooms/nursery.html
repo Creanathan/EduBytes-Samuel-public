@@ -4,21 +4,33 @@
     <title>Nursery Room</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/rooms.css">
     <style>
-        .translate-middle-y { transform: translateY(-50%); }
-        .translate-middle-x { transform: translateX(-50%); }
+        .room-background { background-image: url('../../assets/rooms/nursery.png'); }
+        /* Positioning hotspots corrected based on final luxury background image */
+        #obj-cradle { top: 45%; left: 32%; width: 35%; height: 45%; }
+        #obj-picture { top: 22%; right: 4%; width: 15%; height: 28%; }
     </style>
 </head>
 <body>
-
+<div class="room-background"></div>
 <h1>Nursery</h1>
 
-<!--Room navigatie Knoppen -->
-<button class="btn btn-primary position-fixed top-50 start-0 translate-middle-y ms-3" id="btn-left" onclick="previousRoom()"><</button>
+<div class="interactable-layer">
+    <div id="obj-cradle" class="clickable-object" onclick="showInteraction('cradle')" title="Wooden Cradles"></div>
+    <div id="obj-picture" class="clickable-object" onclick="showInteraction('family_picture')" title="Family Picture"></div>
+</div>
 
-<button class="btn btn-dark position-fixed bottom-0 start-50 translate-middle-x mb-3" id="btn-bottom" onclick="openTablet()">v</button>
+<div id="dialog-container"></div>
+
+<!--Room navigatie Knoppen -->
+<button class="btn btn-primary ui-button position-fixed top-50 start-0 translate-middle-y ms-3" id="btn-left" onclick="goToLocation('hallway.html')"><</button>
+
+<button class="btn btn-dark ui-button position-fixed bottom-0 start-50 translate-middle-x mb-3" id="btn-bottom" onclick="openTablet()">v</button>
 
 <script src="../../js/components/movement.js"></script>
+<script src="../../js/data/dialogs.js"></script>
+<script src="../../js/components/dialog.js"></script>
 <script src="../../js/components/dynamic_loading.js"></script>
 
 </body>

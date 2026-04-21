@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Outside - EduBytes</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/rooms.css">
+    <style>
+        .room-background { background-image: url('../../assets/rooms/outside.png'); }
+    </style>
+</head>
+<body class="bg-dark text-white">
+
+    <div class="room-background"></div>
+    <h1>Outside</h1>
+    
+    <div id="dialog-container"></div>
+
+    <!-- UI Buttons according to Chapter 1 Template -->
+    <button class="btn btn-primary ui-button position-fixed top-0 start-50 translate-middle-x mt-3" id="btn-top" onclick="goToLocation('hallway.html')">^</button>
+
+    <script src="../../js/components/movement.js"></script>
+    <script src="../../js/data/dialogs.js"></script>
+    <script src="../../js/components/dialog.js"></script>
+</body>
+</html>

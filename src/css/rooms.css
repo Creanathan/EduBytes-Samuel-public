@@ -1,0 +1,95 @@
+/* 
+  Room Navigation & Interactive Objects Styling
+  Noir Detective Theme - Chapter 1
+*/
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+}
+
+.room-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+    filter: brightness(0.7) contrast(1.1);
+    transition: filter 0.5s ease;
+}
+
+/* Subtiele Noir Vignette */
+.room-background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+}
+
+h1 {
+    position: fixed;
+    top: 20px;
+    left: 40px;
+    margin: 0;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.8);
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* Interactable Zones Layer */
+.interactable-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+}
+
+.clickable-object {
+    position: absolute;
+    cursor: help;
+    border: 1px solid transparent; /* Change to rgba(255,255,255,0.1) for debugging */
+    transition: border 0.3s ease, background 0.3s ease;
+}
+
+.clickable-object:hover {
+    border: 2px solid rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 15px rgba(255,255,255,0.3);
+}
+
+/* UI Buttons Overlays */
+.ui-button {
+    z-index: 100;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ui-button:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Dialog Container override */
+#dialog-container {
+    z-index: 200;
+}

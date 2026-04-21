@@ -45,7 +45,7 @@
             <p>> <strong>Status:</strong> Person of Interest</p>
             <p>> <strong>Phone:</strong> 555-019-2814</p>
             
-            <button class="btn-continue" onclick="closeTablet()">Close Tablet & Proceed to Nursery</button>
+            <button class="btn-continue" onclick="closeTablet()">Close Tablet</button>
         </div>
     </div>
 
@@ -56,9 +56,9 @@
             window.history.back();
         }
 
-        // Placeholder function to simulate closing the tablet and returning to the game flow
+        // Closes the tablet and returns to the current room
         function closeTablet() {
-            window.location.href = "../rooms/nursery.html";
+            goBack();
         }
 
         // Listen for Up arrow
