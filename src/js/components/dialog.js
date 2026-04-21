@@ -35,10 +35,10 @@
         left: 50%;
         transform: translateX(-50%);
         width: 80%;
-        max-width: 700px;
-        background: rgba(30, 30, 40, 0.95);
-        border: 2px solid #555;
-        border-radius: 8px;
+        max-width: 800px;
+        background: rgba(15, 10, 15, 0.95);
+        border: 2px solid #c8860a;
+        border-radius: 12px;
         padding: 20px;
         color: #eee;
         font-family: 'Segoe UI', sans-serif;
@@ -46,7 +46,30 @@
         z-index: 900;
         cursor: pointer;
         user-select: none;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    `;
+
+    const portraitContainer = document.createElement("div");
+    const portraitImg = document.createElement("img");
+    portraitImg.style.cssText = `
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid #c8860a;
+        box-shadow: 0 0 15px rgba(0,0,0,0.7);
+        display: none;
+    `;
+    portraitContainer.appendChild(portraitImg);
+
+    const contentContainer = document.createElement("div");
+    contentContainer.style.cssText = `
+        flex: 1;
+        display: flex;
+        flex-direction: column;
     `;
 
     const speakerEl = document.createElement("div");
@@ -54,7 +77,7 @@
     speakerEl.style.cssText = `
         font-weight: bold;
         font-size: 14px;
-        color: #aaa;
+        color: #c8860a;
         margin-bottom: 8px;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -93,10 +116,13 @@
         flex-wrap: wrap;
     `;
 
-    dialogBox.appendChild(speakerEl);
-    dialogBox.appendChild(textEl);
-    dialogBox.appendChild(hintEl);
-    dialogBox.appendChild(optionsEl);
+    contentContainer.appendChild(speakerEl);
+    contentContainer.appendChild(textEl);
+    contentContainer.appendChild(hintEl);
+    contentContainer.appendChild(optionsEl);
+
+    dialogBox.appendChild(portraitContainer);
+    dialogBox.appendChild(contentContainer);
     container.appendChild(dialogBox);
 
     // --- Render current state ---
@@ -108,6 +134,22 @@
         }
 
         speakerEl.textContent = dialog.speaker;
+        
+        // Handle Portrait Mapping
+        const name = dialog.speaker.toLowerCase();
+        let portraitSrc = "";
+        if (name.includes("dekoning")) portraitSrc = "../../assets/images/characters/detective.png";
+        else if (name.includes("leduc") || name.includes("butler")) portraitSrc = "../../assets/images/characters/butler.png";
+        else if (name.includes("thomas")) portraitSrc = "../../assets/images/characters/thomas.png";
+        else if (name.includes("beatrix") || name.includes("lemur")) portraitSrc = "../../assets/images/characters/beatrix.png";
+
+        if (portraitSrc) {
+            portraitImg.src = portraitSrc;
+            portraitImg.style.display = "block";
+        } else {
+            portraitImg.style.display = "none";
+        }
+
         optionsEl.innerHTML = "";
 
         if (currentLineIndex < dialog.lines.length) {
