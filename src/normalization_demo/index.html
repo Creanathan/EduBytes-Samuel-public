@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police OS - Database Normalization (1NF)</title>
+    <!-- Bootstrap CSS for Edge Buttons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .translate-middle-x { transform: translateX(-50%); }
+    </style>
+</head>
+<body>
+
+    <!-- Back to Room Button -->
+    <button class="btn btn-dark position-fixed top-0 start-50 translate-middle-x mt-3 z-3" style="z-index: 1050;" id="btn-top" onclick="goBack()">^</button>
+
+    <div class="tablet-container mt-5">
+        <h1>Case Mansion - Police OS</h1>
+
+        <div id="error-banner" class="error-banner">
+            [SYS_ERR_1NF] Error opening database: multiple entries in one cell.
+            <br><small>Click on the corrupted data cells to atomicize the values.</small>
+        </div>
+
+        <table id="police-db">
+            <thead>
+                <tr>
+                    <th>Log_ID</th>
+                    <th>Officer</th>
+                    <th>Searched_Rooms</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data is populated via logic.js -->
+            </tbody>
+        </table>
+
+        <!-- Hidden Reward Section (Pop-up inside the tablet) -->
+        <div id="reward-section" class="reward-section">
+            <h3>[DECRYPTED_ENTRY]</h3>
+            <p>Hidden contact details recovered from database:</p>
+            <p>> <strong>Subject:</strong> "Nanny" (Beatrix Lémur)</p>
+            <p>> <strong>Status:</strong> Person of Interest</p>
+            <p>> <strong>Phone:</strong> 555-019-2814</p>
+            
+            <button class="btn-continue" onclick="closeTablet()">Close Tablet & Proceed to Nursery</button>
+        </div>
+    </div>
+
+    <script src="logic.js"></script>
+    <script>
+        // Go back to the previous room
+        function goBack() {
+            window.history.back();
+        }
+
+        // Placeholder function to simulate closing the tablet and returning to the game flow
+        function closeTablet() {
+            window.location.href = "../rooms/nursery.html";
+        }
+
+        // Listen for Up arrow
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "ArrowUp" || event.key === "w" || event.key === "W") {
+                goBack();
+            }
+        });
+    </script>
+</body>
+</html>
