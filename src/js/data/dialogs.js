@@ -103,7 +103,7 @@ const DIALOGS = {
         },
         door_nursery: {
             speaker: "Det. Louis Dekoning",
-            lines: ["The Nursery door. Locked.", "Dorian probably has the key. I should search for another way in or ask him."],
+            lines: ["The Nursery door. Locked.", "Jeanne-Paul Leduc probably has the key. I should search for another way in or ask him."],
             options: [{ label: "Close", action: "exit" }]
         },
         cradle: {
@@ -113,7 +113,7 @@ const DIALOGS = {
         },
         family_picture: {
             speaker: "Det. Louis Dekoning",
-            lines: ["The Dégrasse family. They seem... close. At least in this frame.", "Wait, is that the Nanny in the corner with the buggy?"],
+            lines: ["The Degrasse family. They seem... close. At least in this frame.", "Wait, is that the Nanny in the corner with the buggy?"],
             options: [{ label: "Close", action: "exit" }]
         },
         body: {
