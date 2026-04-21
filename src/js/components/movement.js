@@ -1,40 +1,32 @@
-const Game = {
+const rooms = [
+    "hallway.html",
+    "nursery.html",
+    "living_room.html"
+    /// voeg hier alle paginas toe waartussen je kan bewegen
+];
 
-    currentRoom: null,
-    roomCache: {},
+// Zoek in welke pagina (room) we momenteel zitten
+let currentIndex = rooms.findIndex(room =>
+        window.location.href.includes(room) // checkt of de URL deze bestandsnaam bevat
+    );
 
-    async start(room){
-        this.loadRoom(room);
-    },
+    // Functie om naar de volgende pagina te gaan
+function nextRoom() {
+    // +1 = volgende pagina
+    // % rooms.length = zorgt dat we terug naar het begin gaan als we op het einde zitten
+    let nextIndex = (currentIndex + 1) % rooms.length;
 
-    async loadRoom(room){
+    // Ga naar die pagina
+    window.location.href = rooms[nextIndex];
+}
 
-        this.currentRoom = room;
+    // Functie om naar de vorige pagina te gaan
+function previousRoom() {
+    // -1 = vorige pagina
+    // + rooms.length = voorkomt negatieve index
+    // % rooms.length = zorgt dat we naar het einde gaan als we op het begin zitten
+    let prevIndex = (currentIndex - 1 + rooms.length) % rooms.length;
 
-        let html;
-
-        if(this.roomCache[room]){
-            html = this.roomCache[room];
-        } else {
-
-            const res = await fetch(`rooms/${room}.html`);
-            html = await res.text();
-            this.roomCache[room] = html;
-        }
-
-        document.getElementById("game").innerHTML = html;
-
-        this.bindActions();
-    },
-
-    bindActions(){
-
-        document.querySelectorAll("[data-room]").forEach(el=>{
-            el.onclick = () => {
-                this.loadRoom(el.dataset.room);
-            };
-        });
-
-    },
-
-};
+    // Ga naar die pagina
+    window.location.href = rooms[prevIndex];
+}
