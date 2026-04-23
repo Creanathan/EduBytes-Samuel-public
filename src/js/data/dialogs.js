@@ -1,22 +1,24 @@
 /**
  * Dialog Data Store - Chapter 1
- * All dialog content is defined here in one place.
- * Exact script from background documents:
- *   - Chapter 1 - Interacties met locaties.docx
- *   - Chapter 1 - Interacties met personen.docx
- *   - Chapter 1 - Interacties met dingen.docx
  *
- * Conditional interactions use an array of variant objects.
- * The dialog engine picks the first variant whose condition evaluates to true.
- * Conditions use GameState.hasFlag('...') and Inventory.hasItem('...').
+ * EXACT content from background documents:
+ *   - Chapter 1 — Interacties met dingen.docx
+ *   - Chapter 1 — Interacties met locaties.docx
+ *   - Chapter 1 — Interacties met personen.docx
+ *
+ * Rules:
+ *   - Room entry arrays auto-play on arrival (outside & crime_scene only — per design).
+ *   - Character interactions are click-triggered via showInteraction().
+ *   - Conditional arrays: engine picks first variant whose `condition` evaluates true.
+ *   - Multi-step arrays: object with `steps:[]` property — engine queues all steps.
+ *   - Actions are pipe-separated: "setFlag:X|showBtn:btn-top|exit"
+ *   - "exit"  → advance to next step (or close if no more steps)
+ *   - "close" → immediately close, skip remaining steps
  */
 
 const DIALOGS = {
 
-    // ────────────────────────────────────────
-    // ROOM ENTRY DIALOGS (auto-play on arrive)
-    // ────────────────────────────────────────
-
+    // ── Outside: scene-setting Narrator monologue ──
     outside: [
         {
             speaker: "Narrator",
@@ -28,41 +30,16 @@ const DIALOGS = {
         }
     ],
 
-    // Hallway: Butler greets you on first entry (conditional auto-dialog removed;
-    // Butler is an interactive object the player clicks on instead).
+    // ── Hallway: no auto-dialog (Butler is click-triggered) ──
     hallway: [],
 
-    // Living room: Thomas greets you (first visit or repeat)
-    living_room: [
-        {
-            // First interaction: full introduction
-            speaker: "Thomas Souvellier",
-            lines: [
-                "You must be detective Dekoning. We... spoke on the phone? Thomas Souvellier.",
-                "Please help us. We've already tried going to the police, but my father doesn't think they have the evidence to find out who did this.",
-                "Please find whoever did this. Please."
-            ],
-            options: [
-                { label: "I'll do my best.", action: "setFlag:talked_to_thomas|exit" }
-            ]
-        }
-    ],
+    // ── Living Room: no auto-dialog (Thomas is click-triggered) ──
+    living_room: [],
 
-    // Nursery: Beatrix greets on entry (only after talking to butler)
-    nursery: [
-        {
-            speaker: "Beatrix Lémur",
-            lines: [
-                "Oh, it's truly horrible what happened with sweet little Amelia!",
-                "How could anyone have done something like this to such a warm soul? It's all truly horrendous!"
-            ],
-            options: [
-                { label: "And you are?", action: "exit" },
-                { label: "Leave.", action: "exit" }
-            ]
-        }
-    ],
+    // ── Nursery: no auto-dialog (Beatrix is click-triggered) ──
+    nursery: [],
 
+    // ── Crime Scene: detective monologue on entry ──
     crime_scene: [
         {
             speaker: "Det. Louis Dekoning",
@@ -80,33 +57,61 @@ const DIALOGS = {
 
     nannys_room: [],
 
-    // ────────────────────────────────────────
+    // ────────────────────────────────────────────────
     // INTERACTIVE OBJECT INTERACTIONS
-    // ────────────────────────────────────────
+    // Exact text from Chapter 1 — Interacties met dingen.docx
+    // Exact dialogue from Chapter 1 — Interacties met personen.docx
+    // ────────────────────────────────────────────────
     interactions: {
 
-        // ── The Butler (Jeanne-Paul Leduc) ──
-        // Supports three narrative states from the background doc:
-        //   1. First interaction → full welcome, player can unlock crime scene
-        //   2. Crime scene unlocked but not yet visited
-        //   3. Repeat visit, crime scene already investigated → nursery key
+        // ── Jeanne-Paul Leduc — 4 conditional states ──
+        // Source: Chapter 1 — Interacties met personen.docx
         leduc: [
             {
-                // State 1: First interaction – crime scene not yet unlocked
-                condition: "!GameState.hasFlag('crime_scene_unlocked')",
-                speaker: "Jeanne-Paul Leduc (Butler)",
-                lines: [
-                    "Welcome, good sir. You must be the befamed detective Dekoning?",
-                    "We thank you for coming on such short notice. This is the first time something like this has ever happened at the Degrasse mansion and everyone is completely taken aback.",
-                    "Shall I take you to the crime scene? Or would you rather talk to the people present first?"
-                ],
-                options: [
-                    { label: "Please.", action: "setFlag:crime_scene_unlocked|showBtn:btn-top|exit" },
-                    { label: "Later.", action: "exit" }
+                // STATE 1: First interaction ever
+                condition: "!GameState.hasFlag('talked_to_leduc')",
+                // Multi-step: "In the flesh." → then "Shall I take you?"
+                steps: [
+                    {
+                        speaker: "Jeanne-Paul Leduc (Butler)",
+                        lines: [
+                            "Welcome, good sir. You must be the befamed detective Dekoning?"
+                        ],
+                        options: [
+                            { label: "In the flesh.", action: "exit" }
+                        ]
+                    },
+                    {
+                        speaker: "Jeanne-Paul Leduc (Butler)",
+                        lines: [
+                            "We thank you for coming on such short notice. This is the first time something like this has ever happened at the Degrasse mansion and everyone is completely taken aback.",
+                            "Shall I take you to the crime scene? Or would you rather talk to the people present first?"
+                        ],
+                        options: [
+                            { label: "Please.",  action: "setFlag:talked_to_leduc|setFlag:crime_scene_unlocked|showBtn:btn-top|exit" },
+                            { label: "Later.",   action: "setFlag:talked_to_leduc|exit" }
+                        ]
+                    }
                 ]
             },
             {
-                // State 2: Crime scene unlocked but not yet visited
+                // STATE 2: Returned after saying "Later." — crime scene not yet unlocked
+                condition: "GameState.hasFlag('talked_to_leduc') && !GameState.hasFlag('crime_scene_unlocked') && !GameState.hasFlag('crime_scene_visited')",
+                steps: [
+                    {
+                        speaker: "Jeanne-Paul Leduc (Butler)",
+                        lines: [
+                            "Are you ready to go to the crime scene now?"
+                        ],
+                        options: [
+                            { label: "Please.",  action: "setFlag:crime_scene_unlocked|showBtn:btn-top|exit" },
+                            { label: "Later.",   action: "exit" }
+                        ]
+                    }
+                ]
+            },
+            {
+                // STATE 3: Crime scene unlocked but not yet visited
                 condition: "GameState.hasFlag('crime_scene_unlocked') && !GameState.hasFlag('crime_scene_visited')",
                 speaker: "Jeanne-Paul Leduc (Butler)",
                 lines: [
@@ -118,38 +123,53 @@ const DIALOGS = {
                 ]
             },
             {
-                // State 3: Crime scene visited – offer nursery key
+                // STATE 4: Crime scene visited — no further action specified in background doc
+                // (Nursery key is not mentioned for the butler; leave a neutral line)
                 condition: "GameState.hasFlag('crime_scene_visited')",
                 speaker: "Jeanne-Paul Leduc (Butler)",
                 lines: [
-                    "Are you ready to investigate further?",
-                    "The Nursery? It is locked for the children's safety, especially now.",
-                    "But I suppose you must see it. Here is the spare key. Please be careful."
+                    "Thank you for your diligence, detective. Please do let me know if you need anything."
                 ],
                 options: [
-                    { label: "Take the Key", action: "addItem:nursery_key|exit" },
-                    { label: "Thank you.", action: "exit" }
+                    { label: "Of course.", action: "exit" }
                 ]
             }
         ],
 
-        // ── Beatrix Lémur (Nanny – in Nursery) ──
+        // ── Beatrix Lémur — 2 conditional states ──
+        // Source: Chapter 1 — Interacties met personen.docx
         beatrix: [
             {
-                // First interaction
+                // STATE 1: First interaction (condition per doc: talked to butler + not visited crime scene)
                 condition: "!GameState.hasFlag('talked_to_beatrix')",
-                speaker: "Beatrix Lémur",
-                lines: [
-                    "Oh, it's truly horrible what happened with sweet little Amelia!",
-                    "How could anyone have done something like this to such a warm soul? It's all truly horrendous!"
-                ],
-                options: [
-                    { label: "And you are?", action: "setFlag:talked_to_beatrix|exit" },
-                    { label: "Leave.", action: "exit" }
+                steps: [
+                    {
+                        speaker: "Beatrix Lémur",
+                        lines: [
+                            "Oh, it's truly horrible what happened with sweet little Amelia!",
+                            "How could anyone have done something like this to such a warm soul? It's all truly horrendous!"
+                        ],
+                        options: [
+                            { label: "And you are?", action: "exit" },
+                            { label: "Leave.",       action: "close" }
+                        ]
+                    },
+                    {
+                        // This step only reached via "And you are?" (Leave uses "close" to skip)
+                        speaker: "Beatrix Lémur",
+                        lines: [
+                            "My name is Beatrix Lémur, the nanny of the triplets.",
+                            "Poor things, having to grow up without a mother.",
+                            "And poor mister Souvellier! I can't even imagine how he must feel right now. He is such a sensitive soul..."
+                        ],
+                        options: [
+                            { label: "Thank you.", action: "setFlag:talked_to_beatrix|exit" }
+                        ]
+                    }
                 ]
             },
             {
-                // After asking who she is
+                // STATE 2: Subsequent interactions
                 condition: "GameState.hasFlag('talked_to_beatrix')",
                 speaker: "Beatrix Lémur",
                 lines: [
@@ -163,22 +183,11 @@ const DIALOGS = {
             }
         ],
 
-        // Beatrix introduction answer (triggered after player asks "And you are?")
-        beatrix_intro: {
-            speaker: "Beatrix Lémur",
-            lines: [
-                "My name is Beatrix Lémur, the nanny of the triplets.",
-                "Poor things, having to grow up without a mother.",
-                "And poor mister Souvellier! I can't even imagine how he must feel right now. He is such a sensitive soul..."
-            ],
-            options: [
-                { label: "Thank you.", action: "setFlag:talked_to_beatrix|exit" }
-            ]
-        },
-
-        // ── Thomas Souvellier (repeat interaction) ──
+        // ── Thomas Souvellier — 2 conditional states ──
+        // Source: Chapter 1 — Interacties met personen.docx
         thomas: [
             {
+                // STATE 1: First interaction
                 condition: "!GameState.hasFlag('talked_to_thomas')",
                 speaker: "Thomas Souvellier",
                 lines: [
@@ -191,6 +200,7 @@ const DIALOGS = {
                 ]
             },
             {
+                // STATE 2: Subsequent interactions
                 condition: "GameState.hasFlag('talked_to_thomas')",
                 speaker: "Thomas Souvellier",
                 lines: [
@@ -203,55 +213,57 @@ const DIALOGS = {
         ],
 
         // ── Interactable Objects ──
+        // Source: Chapter 1 — Interacties met dingen.docx
+
         mirror: {
             speaker: "Det. Louis Dekoning",
-            lines: ["Maybe I should've shaved. This case is already taking its toll on me."],
+            lines: ["Maybe I should've shaved."],
             options: [{ label: "Close", action: "exit" }]
         },
+
         clock: {
             speaker: "Det. Louis Dekoning",
-            lines: [
-                "An old Howard Millar grandfather clock. Still ticking perfectly.",
-                "It's one of the few things in this house that doesn't feel like it's hiding something."
-            ],
+            lines: ["An old Howard Millar grandfather clock."],
             options: [{ label: "Close", action: "exit" }]
         },
+
         piano: {
             speaker: "Det. Louis Dekoning",
             lines: ["I shouldn't waste any time playing a tune. There is a murderer on the loose."],
             options: [{ label: "Close", action: "exit" }]
         },
+
+        // Door in Living Room — leads to Nanny's Room
         door_nannys_room: {
             speaker: "Det. Louis Dekoning",
-            lines: [
-                "Locked. Best to ask for a key later."
-            ],
+            lines: ["Locked. Best to ask for a key later."],
             options: [{ label: "Close", action: "exit" }]
         },
         door_nannys_room_unlocked: {
             speaker: "Det. Louis Dekoning",
-            lines: [
-                "The Nanny's room. I have the key.",
-                "Let's go inside."
-            ],
+            lines: ["The Nanny's room. I have the key.", "Let's go inside."],
             options: [
                 { label: "Enter", action: "goTo:nannys_room.html" },
-                { label: "Wait", action: "exit" }
+                { label: "Wait",  action: "exit" }
             ]
         },
+
         cradle: {
             speaker: "Det. Louis Dekoning",
-            lines: ["Best not to wake them up... The atmosphere in here is already heavy enough."],
+            lines: ["Best not to wake them up..."],
             options: [{ label: "Close", action: "exit" }]
         },
+
         family_picture: {
             speaker: "Det. Louis Dekoning",
             lines: [
-                "The Degrasse family. They seem... close. At least in this frame.",
+                "The Degrasse family. They seem... close.",
                 "Wait, is that the Nanny in the corner with the buggy?"
             ],
             options: [{ label: "Close", action: "exit" }]
         },
+
+        // Crime Scene objects (forensic investigation — implied by crime_scene room)
         body: {
             speaker: "Det. Louis Dekoning",
             lines: [
@@ -261,6 +273,7 @@ const DIALOGS = {
             ],
             options: [{ label: "Close", action: "exit" }]
         },
+
         broken_glass: {
             speaker: "Det. Louis Dekoning",
             lines: [
@@ -269,6 +282,7 @@ const DIALOGS = {
             ],
             options: [{ label: "Close", action: "exit" }]
         },
+
         locked_safe: {
             speaker: "Det. Louis Dekoning",
             lines: [

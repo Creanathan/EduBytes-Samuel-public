@@ -159,6 +159,12 @@
             part = part.trim();
             if (part === "exit") {
                 // fall through to advance
+            } else if (part === "close") {
+                // Immediately close dialog, skip any remaining queued steps
+                navigating = true;
+                closeDialog();
+                // Clear remaining steps so closing is permanent
+                roomDialogs.length = 0;
             } else if (part.startsWith("setFlag:")) {
                 const flag = part.split(":").slice(1).join(":");
                 if (window.GameState) window.GameState.setFlag(flag);
@@ -221,8 +227,13 @@
 
         if (!interaction) { console.warn("No matching condition for interaction:", key); return; }
 
+        // Support multi-step sequences via 'steps' property
         roomDialogs.length = 0;
-        roomDialogs.push(interaction);
+        if (interaction.steps && Array.isArray(interaction.steps)) {
+            interaction.steps.forEach(s => roomDialogs.push(s));
+        } else {
+            roomDialogs.push(interaction);
+        }
         currentDialogIndex = 0;
         currentLineIndex = 0;
         dialogBox.style.display = "block";
