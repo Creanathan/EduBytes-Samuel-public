@@ -126,6 +126,23 @@ body {
     flex: 1;              /* fills remaining space between bezels */
 }
 
+/* Custom Noir Scrollbar for the tablet screen */
+.tablet-screen::-webkit-scrollbar {
+    width: 6px;
+}
+.tablet-screen::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+.tablet-screen::-webkit-scrollbar-thumb {
+    background: rgba(200, 134, 10, 0.3);
+    border-radius: 10px;
+    border: 1px solid rgba(200, 134, 10, 0.1);
+}
+.tablet-screen::-webkit-scrollbar-thumb:hover {
+    background: rgba(200, 134, 10, 0.6);
+}
+
 /* Screen scanline overlay */
 .tablet-screen::after {
     content: '';
@@ -292,12 +309,41 @@ body {
     50% { border-color: rgba(192, 57, 43, 0.3); }
 }
 
+.success-banner {
+    background: var(--accent-green-dim);
+    border-left: 3px solid var(--accent-green);
+    padding: 16px;
+    margin: 16px 20px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent-green);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    animation: slideDown 0.4s ease-out;
+}
+
+.success-icon {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.success-title {
+    font-weight: bold;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
 /* ============================================
    DATABASE TABLE
    ============================================ */
 
 .db-section {
     padding: 0 20px 20px;
+    overflow-y: auto;
 }
 
 .db-label {
@@ -318,7 +364,7 @@ table {
     transition: box-shadow 0.5s ease;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    overflow: hidden;
+    display: table;
 }
 
 table.success-glow {

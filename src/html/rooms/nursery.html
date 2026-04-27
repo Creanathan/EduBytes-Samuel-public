@@ -7,26 +7,9 @@
     <link rel="stylesheet" href="../../css/rooms.css">
     <style>
         .room-background { background-image: url('../../assets/rooms/nursery.png'); }
-        #obj-cradle  { top: 45%; left: 32%; width: 35%; height: 45%; }
-        #obj-picture { top: 22%; right: 4%; width: 15%; height: 28%; }
-
-        /* Beatrix Lémur sprite */
-        #obj-beatrix {
-            top: 15%; right: 18%; width: 16%; height: 80%;
-            background: transparent; overflow: hidden; border: none;
-        }
-        #obj-beatrix:hover { border: none; background: transparent; }
-        #obj-beatrix img {
-            width: 100%; height: 100%;
-            object-fit: cover; object-position: center top;
-            mix-blend-mode: screen;
-            mask-image: radial-gradient(ellipse 40% 55% at 50% 30%, black 20%, transparent 70%);
-            -webkit-mask-image: radial-gradient(ellipse 40% 55% at 50% 30%, black 20%, transparent 70%);
-            filter: brightness(0.9) contrast(1.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        #obj-beatrix:hover img { filter: brightness(1.2) contrast(1.1); transform: scale(1.02); }
+        #obj-cradle  { top: 60%; left: 28%; width: 48%; height: 35%; }
+        #obj-picture { top: 15%; left: 54%; width: 20%; height: 30%; }
+        #obj-beatrix { top: 38%; left: 78%; width: 10%; height: 55%; }
     </style>
 </head>
 <body>
@@ -36,10 +19,7 @@
 <div class="interactable-layer">
     <div id="obj-cradle"  class="clickable-object" onclick="showInteraction('cradle')"        title="Wooden Cradles"></div>
     <div id="obj-picture" class="clickable-object" onclick="showInteraction('family_picture')" title="Family Picture"></div>
-    <!-- Beatrix Lémur sprite -->
-    <div id="obj-beatrix" class="clickable-object" onclick="handleBeatrixClick()"              title="Beatrix Lémur">
-        <img src="../../assets/images/characters/beatrix.png" alt="Beatrix Lémur">
-    </div>
+    <div id="obj-beatrix" class="clickable-object" onclick="handleBeatrixClick()"              title="Beatrix Lémur"></div>
 </div>
 
 <div id="dialog-container"></div>
@@ -62,8 +42,11 @@
 </script>
 
 <script src="../../js/services/gamestate.js"></script>
+<script src="../../js/services/responsive.js"></script>
+<script src="../../js/components/device_block.js"></script>
 <script src="../../js/components/movement.js"></script>
 <script src="../../js/components/audio.js"></script>
+<script src="../../js/components/game_menu.js"></script>
 <script src="../../js/components/tablet_widget.js"></script>
 <script src="../../js/services/inventory.js"></script>
 <script src="../../js/components/inventory_ui.js"></script>

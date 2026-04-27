@@ -60,6 +60,31 @@
                 border-radius: 50%;
             }
 
+            /* Notification Ping Effect */
+            .tablet-notif-dot {
+                position: absolute;
+                top: -2px;
+                right: -2px;
+                width: 12px;
+                height: 12px;
+                background: #e74c3c;
+                border-radius: 50%;
+                border: 2px solid #0a0a0f;
+                z-index: 10;
+                display: none;
+            }
+
+            .tablet-notif-dot.active {
+                display: block;
+                animation: pulse-red 2s infinite;
+            }
+
+            @keyframes pulse-red {
+                0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+                70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+                100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+            }
+
             #tablet-widget:hover .tablet-widget-icon {
                 border-color: #fff;
             }
@@ -68,26 +93,52 @@
                 background: #fff;
             }
 
-            /* Minimalist label below */
-            .tablet-widget-label {
-                position: absolute;
-                top: -18px;
-                left: 50%;
-                transform: translateX(-50%);
-                font-family: 'Segoe UI', sans-serif;
-                font-size: 9px;
-                letter-spacing: 1.5px;
-                text-transform: uppercase;
-                color: rgba(200, 134, 10, 0.55);
-                white-space: nowrap;
-                opacity: 0;
-                transition: opacity 0.25s, transform 0.25s;
+            #tablet-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0);
+                backdrop-filter: blur(0px) brightness(1);
+                transition: background 0.5s ease, backdrop-filter 0.5s ease;
                 pointer-events: none;
+                opacity: 0;
             }
 
-            #tablet-widget:hover .tablet-widget-label {
+            #tablet-overlay.active {
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(5px) brightness(0.4);
+                pointer-events: all;
                 opacity: 1;
-                transform: translateX(-50%) translateY(-2px);
+            }
+
+            .tablet-container {
+                /* FIXED INTERNAL SIZE */
+                width: 860px;
+                height: 640px;
+                transform: translateY(100vh) scale(1);
+                transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 10px 60px rgba(0,0,0,0.8);
+                border-radius: 24px;
+                overflow: hidden;
+                background: #000;
+                transform-origin: center center;
+            }
+
+            #tablet-overlay.active .tablet-container {
+                /* Will be overwritten by JS scaling */
+                transform: translateY(0) scale(1);
+            }
+
+            #tablet-iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+                background: transparent;
             }
         `;
         document.head.appendChild(style);
@@ -97,7 +148,9 @@
         widget.id = 'tablet-widget';
         widget.innerHTML = `
             <div class="tablet-widget-button">
-                <span class="tablet-widget-icon"></span>
+                <span class="tablet-widget-icon">
+                    <div class="tablet-notif-dot" id="tablet-notif"></div>
+                </span>
             </div>
         `;
 
@@ -107,15 +160,49 @@
 
         document.body.appendChild(widget);
 
-        // Listen for the tablet telling us to close
+        // Update notification state
+        updateNotification();
+
+        // Listen for the tablet telling us to close or that it's finished
         window.addEventListener('message', (event) => {
             if (event.data.type === 'closeTablet') {
                 hideTabletOverlay();
+                updateNotification();
             }
         });
+
+        // Add resize listener for scaling
+        window.addEventListener('resize', updateTabletScale);
+    }
+
+    function updateNotification() {
+        const dot = document.getElementById('tablet-notif');
+        if (!dot) return;
+        
+        const isUnlocked = localStorage.getItem('police_os_unlocked') === 'true';
+        if (!isUnlocked) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
     }
 
     let isTabletOpen = false;
+
+    function updateTabletScale() {
+        const container = document.querySelector('.tablet-container');
+        if (!container || !isTabletOpen) return;
+
+        const winW = window.innerWidth;
+        const winH = window.innerHeight;
+        
+        // Calculate scale to fit 860x640 with some padding
+        const scaleW = (winW * 0.95) / 860;
+        const scaleH = (winH * 0.9) / 640;
+        const finalScale = Math.min(scaleW, scaleH, 1.0);
+
+        container.style.transform = `translateY(0) scale(${finalScale})`;
+    }
 
     function showTabletOverlay() {
         if (isTabletOpen) return;
@@ -132,50 +219,6 @@
                 </div>
             `;
             document.body.appendChild(overlay);
-
-            // Add styles for the overlay
-            const style = document.createElement('style');
-            style.textContent = `
-                #tablet-overlay {
-                    position: fixed;
-                    inset: 0;
-                    z-index: 10000;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    background: rgba(0, 0, 0, 0);
-                    backdrop-filter: blur(0px) brightness(1);
-                    transition: background 0.5s ease, backdrop-filter 0.5s ease;
-                    pointer-events: none;
-                    opacity: 0;
-                }
-
-                #tablet-overlay.active {
-                    background: rgba(0, 0, 0, 0.4);
-                    backdrop-filter: blur(10px) brightness(0.35);
-                    pointer-events: all;
-                    opacity: 1;
-                }
-
-                .tablet-container {
-                    width: 860px;
-                    height: 640px;
-                    transform: translateY(100vh) scale(0.9);
-                    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-                }
-
-                #tablet-overlay.active .tablet-container {
-                    transform: translateY(0) scale(1);
-                }
-
-                #tablet-iframe {
-                    width: 100%;
-                    height: 100%;
-                    border: none;
-                    background: transparent;
-                }
-            `;
-            document.head.appendChild(style);
         }
 
         // Set source and show
@@ -187,6 +230,7 @@
         // Trigger animation
         setTimeout(() => {
             overlay.classList.add('active');
+            updateTabletScale();
         }, 10);
     }
 
@@ -194,6 +238,10 @@
         const overlay = document.getElementById('tablet-overlay');
         if (overlay) {
             overlay.classList.remove('active');
+            const container = document.querySelector('.tablet-container');
+            if (container) {
+                container.style.transform = 'translateY(100vh) scale(1)';
+            }
             // Cleanup iframe source after animation to reset State for next open
             setTimeout(() => {
                 document.getElementById('tablet-iframe').src = "about:blank";
@@ -202,12 +250,5 @@
         }
     }
 
-        // Keyboard shortcut
-        document.addEventListener('keydown', (event) => {
-            if (event.key === "ArrowDown" || event.key === "s" || event.key === "S") {
-                showTabletOverlay();
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', buildTabletWidget);
+    document.addEventListener('DOMContentLoaded', buildTabletWidget);
 })();

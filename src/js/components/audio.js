@@ -57,7 +57,7 @@
 
     let ctx         = null;
     let masterGain  = null;
-    let isMuted     = false;
+    let isMuted     = localStorage.getItem('sfx_muted') === 'true';
     let volume      = parseFloat(localStorage.getItem('sfx_volume') ?? '0.4');
     let started     = false;
 
@@ -218,7 +218,27 @@
             g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 3.5);
             const filter = ctx.createBiquadFilter(); filter.type = 'lowpass';
             filter.frequency.setValueAtTime(200, ctx.currentTime);
-            src.connect(filter); filter.connect(g); g.connect(mas    // ── Door sounds (procedural — high fidelity overhaul) ──
+            src.connect(filter); filter.connect(g); g.connect(masterGain);
+            src.start();
+            setTimeout(doThunder, 15000 + Math.random() * 25000);
+        }
+        doThunder();
+    }
+
+    // ── Tension Drone (for crime scene) ──
+    function createDrone() {
+        const t = ctx.currentTime;
+        [60, 61, 62].forEach(f => {
+            const osc = ctx.createOscillator();
+            osc.frequency.value = f;
+            const g = ctx.createGain();
+            g.gain.value = 0.02;
+            osc.connect(g); g.connect(masterGain);
+            osc.start(t);
+        });
+    }
+
+    // ── Door sounds (procedural — high fidelity overhaul) ──
     function playDoorSound(destUrl) {
         if (!ctx) return;
         const isHeavy = destUrl.includes('hallway') && filename === 'outside';
@@ -318,7 +338,14 @@
         resetG.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
         reset.connect(resetG); resetG.connect(ctx.destination);
         reset.start(t + 0.3); reset.stop(t + 0.5);
-    }or (let i = 0; i < clickSize; i++) clickData[i] = Math.random() * 2 - 1;
+    }
+
+    function playClickSound() {
+        const t = ctx.currentTime;
+        const clickSize = ctx.sampleRate * 0.05;
+        const clickBuf = ctx.createBuffer(1, clickSize, ctx.sampleRate);
+        const clickData = clickBuf.getChannelData(0);
+        for (let i = 0; i < clickSize; i++) clickData[i] = Math.random() * 2 - 1;
         const click = ctx.createBufferSource(); click.buffer = clickBuf;
         const clickFilter = ctx.createBiquadFilter();
         clickFilter.type = 'bandpass'; clickFilter.frequency.value = 2000;
@@ -354,248 +381,30 @@
     document.addEventListener('click', tryStart);
     document.addEventListener('keydown', tryStart);
 
-    // Patch navigation + auto-start if navigated here from another room
-    document.addEventListener('DOMContentLoaded', () => {
-        // ── Ensure Exit Overlay Exists ──
-        if (!document.getElementById('transition-overlay')) {
-            const overlay = document.createElement('div');
-            overlay.id = 'transition-overlay';
-            document.body.appendChild(overlay);
-        }
-
-        patchNavigation();
-        buildAudioPanel();
-
-        // If we arrived via a navigation click, start audio immediately
-        if (new URLSearchParams(window.location.search).get('autoplay') === '1') {
-            setTimeout(tryStart, 80);
-        }
-    });
-
-    // ──────────────────────────────────────────────
-    // DROPDOWN AUDIO CONTROL PANEL
-    // ──────────────────────────────────────────────
-    function buildAudioPanel() {
-        // Inject styles
-        const style = document.createElement('style');
-        style.textContent = `
-            #audio-panel-wrap {
-                position: fixed;
-                top: 14px;
-                right: 16px;
-                z-index: 9999;
-                font-family: 'Segoe UI', sans-serif;
-            }
-
-            #audio-toggle-btn {
-                background: rgba(10, 10, 15, 0.82);
-                border: 1px solid rgba(200, 134, 10, 0.3);
-                border-radius: 50%;
-                width: 36px;
-                height: 36px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                font-size: 15px;
-                color: rgba(200, 134, 10, 0.85);
-                backdrop-filter: blur(8px);
-                transition: border-color 0.25s, box-shadow 0.25s;
-                outline: none;
-                box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-            }
-
-            #audio-toggle-btn:hover {
-                border-color: rgba(200, 134, 10, 0.7);
-                box-shadow: 0 0 14px rgba(200, 134, 10, 0.25);
-            }
-
-            #audio-dropdown {
-                position: absolute;
-                top: calc(100% + 8px);
-                right: 0;
-                background: rgba(10, 10, 16, 0.95);
-                border: 1px solid rgba(200, 134, 10, 0.25);
-                border-radius: 12px;
-                padding: 16px;
-                width: 200px;
-                backdrop-filter: blur(16px);
-                box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-                display: none;
-                flex-direction: column;
-                gap: 12px;
-                animation: dropdown-in 0.18s ease both;
-            }
-
-            #audio-dropdown.open {
-                display: flex;
-            }
-
-            @keyframes dropdown-in {
-                from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-                to   { opacity: 1; transform: translateY(0) scale(1); }
-            }
-
-            .audio-panel-row {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 10px;
-            }
-
-            .audio-label {
-                font-size: 10px;
-                letter-spacing: 1.5px;
-                text-transform: uppercase;
-                color: rgba(200, 134, 10, 0.5);
-            }
-
-            .audio-room-name {
-                font-size: 12px;
-                color: rgba(232, 220, 200, 0.7);
-                font-style: italic;
-            }
-
-            .audio-mute-btn {
-                background: rgba(200, 134, 10, 0.08);
-                border: 1px solid rgba(200, 134, 10, 0.3);
-                border-radius: 8px;
-                color: rgba(200, 134, 10, 0.8);
-                font-size: 12px;
-                padding: 5px 12px;
-                cursor: pointer;
-                transition: all 0.2s;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                width: 100%;
-                text-align: center;
-            }
-
-            .audio-mute-btn:hover {
-                background: rgba(200, 134, 10, 0.18);
-                border-color: rgba(200, 134, 10, 0.6);
-            }
-
-            .audio-mute-btn.muted {
-                color: rgba(192, 57, 43, 0.8);
-                border-color: rgba(192, 57, 43, 0.4);
-                background: rgba(192, 57, 43, 0.08);
-            }
-
-            #audio-volume-slider {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 100%;
-                height: 4px;
-                border-radius: 4px;
-                outline: none;
-                cursor: pointer;
-                background: linear-gradient(to right,
-                    rgba(200,134,10,0.85) 0%,
-                    rgba(200,134,10,0.85) ${volume * 100}%,
-                    rgba(255,255,255,0.1) ${volume * 100}%,
-                    rgba(255,255,255,0.1) 100%);
-            }
-
-            #audio-volume-slider::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                width: 14px; height: 14px;
-                border-radius: 50%;
-                background: rgba(200, 134, 10, 1);
-                cursor: pointer;
-                box-shadow: 0 0 8px rgba(200, 134, 10, 0.6);
-            }
-
-            .audio-divider {
-                border: none;
-                border-top: 1px solid rgba(255,255,255,0.06);
-                margin: 0;
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Build HTML structure
-        const wrap = document.createElement('div');
-        wrap.id = 'audio-panel-wrap';
-
-        const toggleBtn = document.createElement('button');
-        toggleBtn.id = 'audio-toggle-btn';
-        toggleBtn.title = 'Sound settings';
-        toggleBtn.textContent = '\uD83D\uDD0A'; // 🔊 as escape
-
-        const dropdown = document.createElement('div');
-        dropdown.id = 'audio-dropdown';
-
-        // Row: room label
-        dropdown.innerHTML = `
-            <div class="audio-panel-row">
-                <span class="audio-label">Ambient</span>
-                <span class="audio-room-name">${profile.label}</span>
-            </div>
-            <hr class="audio-divider">
-            <div class="audio-panel-row" style="flex-direction: column; align-items: stretch; gap: 8px;">
-                <span class="audio-label" style="margin-bottom: 2px;">Volume</span>
-                <input id="audio-volume-slider" type="range" min="0" max="1" step="0.05" value="${volume}">
-            </div>
-            <button class="audio-mute-btn" id="audio-mute-btn">${isMuted ? 'Unmute' : 'Mute'}</button>
-        `;
-
-        wrap.appendChild(toggleBtn);
-        wrap.appendChild(dropdown);
-        document.body.appendChild(wrap);
-
-        // Toggle dropdown open/close
-        toggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            tryStart();
-            dropdown.classList.toggle('open');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', () => dropdown.classList.remove('open'));
-        dropdown.addEventListener('click', e => e.stopPropagation());
-
-        // Volume slider
-        const slider = document.getElementById('audio-volume-slider');
-        slider.addEventListener('input', () => {
-            tryStart();
-            volume = parseFloat(slider.value);
+    // Expose for external components
+    window.AudioEngine = {
+        play: (type) => {
+            if (!ctx) return;
+            if (type === 'door' || type === 'interior_door') playInteriorDoor();
+            if (type === 'heavy_door') playHeavyDoor();
+            if (type === 'click') playClickSound();
+        },
+        getVolume: () => volume,
+        setVolume: (v) => {
+            volume = v;
             localStorage.setItem('sfx_volume', volume);
             if (masterGain && !isMuted) {
                 masterGain.gain.setTargetAtTime(volume, ctx.currentTime, 0.05);
             }
-            isMuted = false;
-            updateMuteBtn();
-            slider.style.background = `linear-gradient(to right,
-                rgba(200,134,10,0.85) 0%, rgba(200,134,10,0.85) ${volume * 100}%,
-                rgba(255,255,255,0.1) ${volume * 100}%, rgba(255,255,255,0.1) 100%)`;
-        });
-
-        // Mute button
-        const muteBtn = document.getElementById('audio-mute-btn');
-        muteBtn.addEventListener('click', () => {
-            tryStart();
-            isMuted = !isMuted;
+        },
+        isMuted: () => isMuted,
+        setMuted: (m) => {
+            isMuted = m;
+            localStorage.setItem('sfx_muted', isMuted);
             if (masterGain) {
                 masterGain.gain.setTargetAtTime(isMuted ? 0 : volume, ctx.currentTime, 0.1);
             }
-            updateMuteBtn();
-        });
-
-        function updateMuteBtn() {
-            const btn = document.getElementById('audio-mute-btn');
-            const icon = document.getElementById('audio-toggle-btn');
-            if (!btn) return;
-            if (isMuted || volume === 0) {
-                btn.textContent = 'Unmute';
-                btn.classList.add('muted');
-                icon.textContent = '\uD83D\uDD07'; // 🔇
-            } else {
-                btn.textContent = 'Mute';
-                btn.classList.remove('muted');
-                icon.textContent = '\uD83D\uDD0A'; // 🔊
-            }
-        }
-    }
-
+        },
+        tryStart: () => tryStart()
+    };
 })();

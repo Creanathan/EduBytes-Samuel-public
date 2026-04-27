@@ -241,10 +241,10 @@ const DIALOGS = {
         },
         door_nannys_room_unlocked: {
             speaker: "Det. Louis Dekoning",
-            lines: ["The Nanny's room. I have the key.", "Let's go inside."],
+            lines: ["The Nanny's room. I have the key.", "The door is now open."],
             options: [
-                { label: "Enter", action: "goTo:nannys_room.html" },
-                { label: "Wait",  action: "exit" }
+                { label: "Enter", action: "setFlag:nannys_room_unlocked|goTo:nannys_room.html" },
+                { label: "Stay",  action: "setFlag:nannys_room_unlocked|setBackground:../../assets/rooms/living_room_open.png|showBtn:btn-top|hideObj:obj-door|playSound:door|exit" }
             ]
         },
 

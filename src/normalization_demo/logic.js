@@ -3,13 +3,17 @@
  * Developer: Detective Louis Dekoning (In-Lore)
  */
 
-// Hardcoded initial "Dirty" database
-let policeData = [
+// Initial "Dirty" database
+const DEFAULT_DATA = [
     { log_id: "#001", officer: "Off. Miller", searched_rooms: "Kitchen" },
     { log_id: "#002", officer: "Det. Louis", searched_rooms: "Nursery, Living Room, Hallway" },
     { log_id: "#003", officer: "Off. Hayes", searched_rooms: "Study, Master Bedroom" },
     { log_id: "#004", officer: "Sgt. Cross", searched_rooms: "Bathroom" }
 ];
+
+// Load saved data or use default
+let policeData = JSON.parse(localStorage.getItem('police_os_data')) || DEFAULT_DATA;
+let isUnlocked = localStorage.getItem('police_os_unlocked') === 'true';
 
 // Initialize UI
 document.addEventListener("DOMContentLoaded", renderTable);
@@ -42,22 +46,20 @@ function renderTable() {
     });
 
     checkWinCondition();
+    
+    // Auto-trigger if already unlocked from a previous session
+    if (isUnlocked) {
+        showSuccessUI();
+    }
 }
 
-/**
- * De Interactie (Atoomsplitser)
- * Cuts the string by comma, duplicates metadata, and replaces the row.
- */
 function splitData(index) {
+    if (isUnlocked) return; // Prevent edits once finalized
+
     const corruptRow = policeData[index];
-    
-    // 1. Split the data by comma
     const roomsArray = corruptRow.searched_rooms.split(",").map(room => room.trim());
 
-    // 2. Remove the original corrupt row from the array (simulating .remove())
     policeData.splice(index, 1);
-
-    // 3. For each room, generate a new row duplicating the crucial Log_ID and Officer data
     const newRows = roomsArray.map(room => {
         return {
             log_id: corruptRow.log_id,
@@ -66,51 +68,38 @@ function splitData(index) {
         };
     });
 
-    // Insert the newly generated atomic rows at the exact same location
     policeData.splice(index, 0, ...newRows);
 
-    // Optional: Recalculate Log_IDs to make them sequential as requested by user
-    policeData = policeData.map((row, i) => {
-        return {
-            log_id: `#${String(i + 1).padStart(3, '0')}`,
-            officer: row.officer,
-            searched_rooms: row.searched_rooms
-        };
-    });
+    // Save to localStorage
+    localStorage.setItem('police_os_data', JSON.stringify(policeData));
 
-    // Re-render the visual table
     renderTable();
 }
 
-/**
- * 4. Acceptatiecriteria (Definition of Done)
- * Checks if the table is 100% in 1NF and triggers the lore reward.
- */
 function checkWinCondition() {
-    // Determine if any commas exist in the current dataset
     const isCorrupted = policeData.some(row => row.searched_rooms.includes(","));
-
     if (!isCorrupted) {
         triggerSuccessState();
     }
 }
 
-let isUnlocked = false;
-
 function triggerSuccessState() {
-    // Prevent triggering multiple times
     if (isUnlocked) return;
     isUnlocked = true;
+    localStorage.setItem('police_os_unlocked', 'true');
+    showSuccessUI();
+}
 
+function showSuccessUI() {
     // UI Update 1: Remove Error Banner
     const banner = document.getElementById("error-banner");
-    banner.style.display = "none";
+    if (banner) banner.style.display = "none";
 
-    // UI Update 2: Neon Green Table Borders
+    // UI Update 2: Show Success Banner
+    const success = document.getElementById("success-banner");
+    if (success) success.style.display = "flex";
+
+    // UI Update 3: Neon Green Table Borders
     const table = document.getElementById("police-db");
-    table.classList.add("success-glow");
-
-    // UI Update 3: Lore Integration (Reward Popup)
-    const reward = document.getElementById("reward-section");
-    reward.style.display = "block";
+    if (table) table.classList.add("success-glow");
 }

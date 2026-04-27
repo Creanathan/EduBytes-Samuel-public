@@ -11,8 +11,6 @@
     const filename = path.substring(path.lastIndexOf("/") + 1).replace(".html", "");
     const roomDialogs = DIALOGS[filename] || [];
 
-    if (roomDialogs.length === 0) return; // No dialogs for this room
-
     // --- State ---
     let currentDialogIndex = 0;
     let currentLineIndex = 0;
@@ -41,7 +39,7 @@
         cursor: pointer;
         user-select: none;
         box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-        display: flex;
+        display: none;
         gap: 20px;
         align-items: flex-start;
     `;
@@ -180,6 +178,19 @@
                 const btnId = part.split(":")[1];
                 const btn = document.getElementById(btnId);
                 if (btn) btn.style.display = "flex";
+            } else if (part.startsWith("setBackground:")) {
+                const imgPath = part.split(":").slice(1).join(":");
+                const bg = document.querySelector(".room-background");
+                if (bg) bg.style.backgroundImage = `url('${imgPath}')`;
+            } else if (part.startsWith("hideObj:")) {
+                const objId = part.split(":")[1];
+                const obj = document.getElementById(objId);
+                if (obj) obj.style.display = "none";
+            } else if (part.startsWith("playSound:")) {
+                const soundType = part.split(":")[1];
+                if (window.AudioEngine && window.AudioEngine.play) {
+                    window.AudioEngine.play(soundType);
+                }
             }
         });
 
@@ -206,7 +217,10 @@
         }
     });
 
-    render();
+    if (roomDialogs.length > 0) {
+        dialogBox.style.display = "block";
+        render();
+    }
 
     // Global showInteraction — supports conditional arrays
     window.showInteraction = (key) => {

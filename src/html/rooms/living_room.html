@@ -6,28 +6,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/rooms.css">
     <style>
-        .room-background { background-image: url('../../assets/rooms/living_room.png'); }
-        #obj-piano  { bottom: 20%; left: 10%;  width: 35%; height: 50%; }
-        /* Door leads to Nanny's Room per Interacties met locaties.docx */
-        #obj-door   { top: 25%;   right: 10%; width: 15%; height: 60%; }
-
-        /* Thomas Souvellier sprite */
-        #obj-thomas {
-            top: 20%; left: 55%; width: 18%; height: 80%;
-            background: transparent; overflow: hidden; border: none;
+        .room-background { 
+            background-image: url('../../assets/rooms/living_room_closed.png'); 
+            transition: background-image 0.5s ease-in-out;
         }
-        #obj-thomas:hover { border: none; background: transparent; }
-        #obj-thomas img {
-            width: 100%; height: 100%;
-            object-fit: cover; object-position: center top;
-            mix-blend-mode: screen;
-            mask-image: radial-gradient(ellipse 40% 55% at 50% 30%, black 20%, transparent 70%);
-            -webkit-mask-image: radial-gradient(ellipse 40% 55% at 50% 30%, black 20%, transparent 70%);
-            filter: brightness(0.9) contrast(1.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        #obj-thomas:hover img { filter: brightness(1.2) contrast(1.1); transform: scale(1.02); }
+        #obj-piano  { top: 38%; left: 55%; width: 40%; height: 45%; }
+        #obj-door   { top: 25%; left: 42%; width: 14%; height: 35%; }
+        #obj-thomas { top: 35%; left: 30%; width: 15%; height: 58%; }
     </style>
 </head>
 <body>
@@ -37,10 +22,7 @@
 <div class="interactable-layer">
     <div id="obj-piano"  class="clickable-object" onclick="showInteraction('piano')" title="Grand Piano"></div>
     <div id="obj-door"   class="clickable-object" onclick="handleDoorClick()"        title="Nanny's Room Door"></div>
-    <!-- Thomas Souvellier sprite -->
-    <div id="obj-thomas" class="clickable-object" onclick="showInteraction('thomas')" title="Thomas Souvellier">
-        <img src="../../assets/images/characters/thomas.png" alt="Thomas Souvellier">
-    </div>
+    <div id="obj-thomas" class="clickable-object" onclick="showInteraction('thomas')" title="Thomas Souvellier"></div>
 </div>
 
 <div id="dialog-container"></div>
@@ -51,13 +33,28 @@
         id="btn-right" onclick="goToLocation('hallway.html')">></button>
 
 <!-- Small Up button near door → Nanny's Room (requires nannys_key) -->
-<!-- Positioned near the top-right door area -->
+<!-- Positioned near the center background door area -->
 <button class="btn btn-secondary ui-button position-fixed"
         id="btn-top"
-        style="top: 20%; right: 12%; width: 36px; height: 36px; font-size: 0.9rem;"
+        style="display: none; top: 20%; left: 44.5%; width: 36px; height: 36px; font-size: 0.9rem;"
         onclick="goToLocation('nannys_room.html', 'nannys_key')">^</button>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Persistence: Check if door was already unlocked
+        if (window.GameState && window.GameState.hasFlag('nannys_room_unlocked')) {
+            const bg = document.querySelector('.room-background');
+            if (bg) bg.style.backgroundImage = "url('../../assets/rooms/living_room_open.png')";
+            
+            const btn = document.getElementById('btn-top');
+            if (btn) btn.style.display = 'flex';
+
+            // Hide the door hitbox since it's already open
+            const doorHitbox = document.getElementById('obj-door');
+            if (doorHitbox) doorHitbox.style.display = 'none';
+        }
+    });
+
     function handleDoorClick() {
         if (window.Inventory && window.Inventory.hasItem('nannys_key')) {
             showInteraction('door_nannys_room_unlocked');
@@ -68,8 +65,11 @@
 </script>
 
 <script src="../../js/services/gamestate.js"></script>
+<script src="../../js/services/responsive.js"></script>
+<script src="../../js/components/device_block.js"></script>
 <script src="../../js/components/movement.js"></script>
 <script src="../../js/components/audio.js"></script>
+<script src="../../js/components/game_menu.js"></script>
 <script src="../../js/components/tablet_widget.js"></script>
 <script src="../../js/services/inventory.js"></script>
 <script src="../../js/components/inventory_ui.js"></script>
