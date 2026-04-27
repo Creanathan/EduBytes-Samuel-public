@@ -43,9 +43,13 @@
         // +1 = volgende pagina
         // % rooms.length = zorgt dat we terug naar het begin gaan als we op het einde zitten
         let nextIndex = (currentIndex + 1) % rooms.length;
+        const target = rooms[nextIndex];
+        if (window.EduBytesNavigation && typeof window.EduBytesNavigation.allowRoomNavigation === 'function') {
+            window.EduBytesNavigation.allowRoomNavigation(target);
+        }
 
         // Ga naar die pagina
-        window.location.href = rooms[nextIndex];
+        window.location.href = target;
     }
 
     // Functie om naar de vorige pagina te gaan
@@ -54,9 +58,13 @@
         // + rooms.length = voorkomt negatieve index
         // % rooms.length = zorgt dat we naar het einde gaan als we op het begin zitten
         let prevIndex = (currentIndex - 1 + rooms.length) % rooms.length;
+        const target = rooms[prevIndex];
+        if (window.EduBytesNavigation && typeof window.EduBytesNavigation.allowRoomNavigation === 'function') {
+            window.EduBytesNavigation.allowRoomNavigation(target);
+        }
 
         // Ga naar die pagina
-        window.location.href = rooms[prevIndex];
+        window.location.href = target;
     }
 </script>
 

@@ -18,6 +18,9 @@ function goToLocation(url, requiredItem) {
         return;
     }
 
+    if (window.EduBytesNavigation && typeof window.EduBytesNavigation.allowRoomNavigation === 'function') {
+        window.EduBytesNavigation.allowRoomNavigation(url);
+    }
     if (window.AudioEngine) {
         window.AudioEngine.play('door_open');
         setTimeout(() => {
@@ -29,4 +32,4 @@ function goToLocation(url, requiredItem) {
 }
 
 
-
+

@@ -20,3 +20,9 @@ start-local-host.bat 8080
 ## Notes
 - The script will run from the current project folder, so it serves `index.html` and the `src/` files correctly.
 - If `python` is not installed, install Python 3 and make sure it is available in your PATH.
+
+## Published online
+- Public repository: https://github.com/Creanathan/EduBytes-Samuel-public
+- GitHub Pages site: https://creanathan.github.io/EduBytes-Samuel-public/
+
+The site is configured to serve from the `main` branch root. It may take a few minutes for the Pages build to finish and become live.

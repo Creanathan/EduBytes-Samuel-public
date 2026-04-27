@@ -172,6 +172,9 @@
             } else if (part.startsWith("goTo:")) {
                 navigating = true;
                 const url = part.split(":")[1];
+                if (window.EduBytesNavigation && typeof window.EduBytesNavigation.allowRoomNavigation === 'function') {
+                    window.EduBytesNavigation.allowRoomNavigation(url);
+                }
                 if (window.goToLocation) window.goToLocation(url);
                 else window.location.href = url;
             } else if (part.startsWith("showBtn:")) {

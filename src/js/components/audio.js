@@ -106,6 +106,10 @@
     function patchNavigation() {
         const origGoTo = window.goToLocation;
         window.goToLocation = function(url) {
+            if (window.EduBytesNavigation && typeof window.EduBytesNavigation.allowRoomNavigation === 'function') {
+                window.EduBytesNavigation.allowRoomNavigation(url);
+            }
+
             // Add autoplay flag so new room starts audio automatically
             const sep = url.includes('?') ? '&' : '?';
             const dest = new URL(url + sep + 'autoplay=1', window.location.href).href;
