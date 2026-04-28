@@ -1,6 +1,6 @@
-# EduBytes: Samuel — Story & Design Bible
+# EduBytes — Story & Design Bible
 
-This document standardizes the narrative, characters, and investigative mechanics for the *EduBytes: Samuel* Noir detective game, based on the original design documentation.
+This document standardizes the narrative, characters, and investigative mechanics for the *EduBytes* Noir detective game, based on the original design documentation.
 
 ---
 

@@ -1,6 +1,6 @@
-# EduBytes Samuel - Color Scheme & Design System
+# EduBytes - Color Scheme & Design System
 
-This document outlines the official color palette and design principles for the "EduBytes Samuel" Noir Detective game. All new components and UI elements should adhere to these specifications to maintain a consistent, premium aesthetic.
+This document outlines the official color palette and design principles for the "EduBytes" Noir Detective game. All new components and UI elements should adhere to these specifications to maintain a consistent, premium aesthetic.
 
 ## The "Modern Noir" Palette
 

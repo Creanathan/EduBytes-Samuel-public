@@ -1,6 +1,6 @@
 # Educational Mechanic: 1NF Normalization
 
-This document outlines the implementation of the **First Normal Form (1NF)** educational mechanic within the *EduBytes: Samuel* Noir detective game.
+This document outlines the implementation of the **First Normal Form (1NF)** educational mechanic within the *EduBytes* Noir detective game.
 
 ## 1. Core Concept
 In *EduBytes*, database normalization is presented as a **forensic data recovery** tool. Players do not just "solve a puzzle"; they are reconstructing messy police logs to find hidden investigative leads.

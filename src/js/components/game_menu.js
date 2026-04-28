@@ -1,5 +1,5 @@
 /**
- * Global Game Menu Component - EduBytes Samuel
+ * Global Game Menu Component - EduBytes
  * Implements a unified hamburger menu in the top-right corner of every room.
  * Features:
  * - Hamburger icon with dropdown animation.

@@ -1,5 +1,5 @@
 /**
- * Tablet Widget — EduBytes Samuel
+ * Tablet Widget — EduBytes
  * Injects a small fixed "tablet" icon in the bottom-right corner of every room.
  * Clicking it opens the Police OS via openTablet().
  * Also removes the keyboard shortcut link to keep it clean.

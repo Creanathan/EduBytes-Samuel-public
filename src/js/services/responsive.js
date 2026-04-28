@@ -1,5 +1,5 @@
 /**
- * Responsive Scaling Service - EduBytes Samuel
+ * Responsive Scaling Service - EduBytes
  * Syncs the .interactable-layer dimensions with the "contained" room background image.
  * This ensures hitboxes stay perfectly aligned regardless of image size or window aspect ratio.
  */

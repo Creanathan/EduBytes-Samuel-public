@@ -1,5 +1,5 @@
 /**
- * Routing Guard Service - EduBytes Samuel
+ * Routing Guard Service - EduBytes
  * Prevents unauthorized access to rooms by checking GameState flags.
  * This ensures players cannot bypass progression by editing the URL.
  */

@@ -1,4 +1,4 @@
-# EduBytes: Samuel — Technical Design Standard
+# EduBytes — Technical Design Standard
 
 This document standardizes the interaction logic and state requirements for Chapter 1, ensuring consistency between the design documents and the JavaScript implementation.
 

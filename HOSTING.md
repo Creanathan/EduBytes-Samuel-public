@@ -1,7 +1,7 @@
 # Local Hosting Instructions
 
 ## Serve the project locally
-1. Open a terminal in the `EduBytes_Samuel` folder.
+1. Open a terminal in the `EduBytes` folder.
 2. Run one of these commands:
    - `python -m http.server 8000`
    - `python3 -m http.server 8000`

@@ -60,33 +60,6 @@
             </button>
         </div>
     </div>
-    <!-- ── Launch Modal (Fresh / Resume) ───────── -->
-    <div class="chapter-overlay" id="launch-overlay">
-        <div class="chapter-backdrop" onclick="closeLaunchModal()"></div>
-        <div class="chapter-panel launch-modal">
-            <div class="chapter-header">
-                <h2 id="launch-modal-title">Chapter 1</h2>
-                <div class="chapter-header-line"></div>
-            </div>
-
-            <p id="launch-modal-subtitle" class="launch-subtitle"></p>
-
-            <div class="launch-actions">
-                <button class="btn-noir btn-play" id="btn-fresh" onclick="freshGame()">
-                    <span class="btn-icon">✦</span>
-                    New Game
-                </button>
-                <button class="btn-noir" id="btn-resume" onclick="resumeGame()">
-                    <span class="btn-icon">▶</span>
-                    Resume
-                </button>
-            </div>
-
-            <button class="btn-back" onclick="closeLaunchModal()">
-                ← Back
-            </button>
-        </div>
-    </div>
 
     <script>
         /* ── Chapter Data ──────────────────────── */
@@ -131,39 +104,15 @@
 
         /* ── Navigation ────────────────────────── */
         function startGame() {
-            selectChapter(1);
+            doLaunch();
         }
 
         function selectChapter(num) {
             selectedChapter = num;
-            const ch = chapters.find(c => c.num === num);
-
-            document.getElementById('launch-modal-title').textContent =
-                `Chapter ${ch.num}: ${ch.title}`;
-            document.getElementById('launch-modal-subtitle').textContent =
-                hasSaveData()
-                        ? 'You have existing save data. Resume your progress or start new.'
-                        : 'Begin your investigation from the start.';
-
-            // Show/hide resume button based on save data
-            document.getElementById('btn-resume').style.display =
-                hasSaveData() ? 'flex' : 'none';
-
-            document.getElementById('launch-overlay').classList.add('active');
-        }
-
-        function freshGame() {
-            localStorage.removeItem('edubytes_gamestate');
-            localStorage.removeItem('edubytes_inventory');
-            doLaunch();
-        }
-
-        function resumeGame() {
             doLaunch();
         }
 
         function doLaunch() {
-            closeLaunchModal();
             closeChapters();
             document.body.classList.add('fade-out');
             setTimeout(() => {
@@ -179,18 +128,10 @@
             document.getElementById('chapter-overlay').classList.remove('active');
         }
 
-        function closeLaunchModal() {
-            document.getElementById('launch-overlay').classList.remove('active');
-        }
-
         /* ── Keyboard support ──────────────────── */
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (document.getElementById('launch-overlay').classList.contains('active')) {
-                    closeLaunchModal();
-                } else {
-                    closeChapters();
-                }
+                closeChapters();
             }
         });
 

@@ -1,5 +1,5 @@
 /**
- * Ambient Audio Engine - EduBytes Samuel
+ * Ambient Audio Engine - EduBytes
  * - Procedurally generated sounds via Web Audio API (no external files)
  * - Smooth fade-in on room enter, fade-out on room leave
  * - Dropdown volume panel styled to match the noir game theme

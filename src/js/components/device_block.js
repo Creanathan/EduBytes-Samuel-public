@@ -1,5 +1,5 @@
 /**
- * Device Blocking Service - EduBytes Samuel
+ * Device Blocking Service - EduBytes
  * Restricts the game to desktop/laptop screens by showing a Noir-themed overlay
  * if the screen width is too narrow (e.g., mobile/portrait).
  */
