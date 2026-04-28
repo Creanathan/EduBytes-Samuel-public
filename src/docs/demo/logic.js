@@ -17,9 +17,9 @@ let currentStep = 1; // 1: Atomicity, 2: Primary Key
 let selectedKeys = new Set(); // For Step 2
 
 // Load saved data - Start EMPTY if no data is found in storage
-let policeData = JSON.parse(localStorage.getItem('police_os_data')) || [];
-let isUnlocked = localStorage.getItem('police_os_unlocked') === 'true';
-let isImported = localStorage.getItem('police_os_imported') === 'true' || policeData.length > 0;
+let DetectiveData = JSON.parse(localStorage.getItem('Detective_os_data')) || [];
+let isUnlocked = localStorage.getItem('Detective_os_unlocked') === 'true';
+let isImported = localStorage.getItem('Detective_os_imported') === 'true' || DetectiveData.length > 0;
 
 // Initialize UI
 document.addEventListener("DOMContentLoaded", () => {
@@ -56,7 +56,7 @@ function checkSetup() {
     } else if (hasLedger) {
         icon.innerText = "\uD83D\uDCC1";
         title.innerText = "Data Ledger Detected";
-        text.innerText = "Physical police registries found. Ready to scan and import into local registry for normalization.";
+        text.innerText = "Physical Detective registries found. Ready to scan and import into local registry for normalization.";
         importBtn.innerText = "SCAN & IMPORT";
         importBtn.style.display = "block";
     } else {
@@ -90,9 +90,9 @@ function startImport() {
 
     function completeImport() {
         isImported = true;
-        policeData = [...DEFAULT_DATA]; // Load the default dirty data
-        localStorage.setItem('police_os_imported', 'true');
-        localStorage.setItem('police_os_data', JSON.stringify(policeData));
+        DetectiveData = [...DEFAULT_DATA]; // Load the default dirty data
+        localStorage.setItem('Detective_os_imported', 'true');
+        localStorage.setItem('Detective_os_data', JSON.stringify(DetectiveData));
 
         const setupScreen = document.getElementById("setup-screen");
         const mainInterface = document.getElementById("main-interface");
@@ -108,8 +108,8 @@ function startImport() {
 }
 
 function renderTable() {
-    const tbody = document.querySelector("#police-db tbody");
-    const thead = document.querySelector("#police-db thead tr");
+    const tbody = document.querySelector("#Detective-db tbody");
+    const thead = document.querySelector("#Detective-db thead tr");
     tbody.innerHTML = ""; 
 
     // Step 2 Header Interaction
@@ -130,7 +130,7 @@ function renderTable() {
         });
     }
 
-    policeData.forEach((row, index) => {
+    DetectiveData.forEach((row, index) => {
         const tr = document.createElement("tr");
 
         // Check if the cell has a comma (violates 1NF Atomicity)
@@ -167,10 +167,10 @@ function toggleKey(colName) {
 function splitData(index) {
     if (currentStep !== 1 || isUnlocked) return;
 
-    const corruptRow = policeData[index];
+    const corruptRow = DetectiveData[index];
     const roomsArray = corruptRow.searched_rooms.split(",").map(room => room.trim());
 
-    policeData.splice(index, 1);
+    DetectiveData.splice(index, 1);
     const newRows = roomsArray.map(room => {
         return {
             log_id: corruptRow.log_id,
@@ -179,8 +179,8 @@ function splitData(index) {
         };
     });
 
-    policeData.splice(index, 0, ...newRows);
-    localStorage.setItem('police_os_data', JSON.stringify(policeData));
+    DetectiveData.splice(index, 0, ...newRows);
+    localStorage.setItem('Detective_os_data', JSON.stringify(DetectiveData));
     renderTable();
 }
 
@@ -188,7 +188,7 @@ function checkStepCondition() {
     if (isUnlocked) return;
 
     if (currentStep === 1) {
-        const isCorrupted = policeData.some(row => row.searched_rooms.includes(","));
+        const isCorrupted = DetectiveData.some(row => row.searched_rooms.includes(","));
         if (!isCorrupted) {
             currentStep = 2;
             updateStepUI();
@@ -213,7 +213,7 @@ function updateStepUI() {
         errorText.innerText = "Individual Log_IDs are no longer unique. Identify the COMPOSITE KEY by tapping the headers (Columns) that uniquely identify each row.";
         
         // Add visual cue to headers
-        const headers = document.querySelectorAll("#police-db th");
+        const headers = document.querySelectorAll("#Detective-db th");
         headers.forEach(th => th.style.animation = "pulse-border 2s infinite");
     }
 }
@@ -221,7 +221,7 @@ function updateStepUI() {
 function triggerSuccessState() {
     if (isUnlocked) return;
     isUnlocked = true;
-    localStorage.setItem('police_os_unlocked', 'true');
+    localStorage.setItem('Detective_os_unlocked', 'true');
     
     // [AI - ANTIGRAVITY] - Notify parent game that normalization is complete
     if (window !== window.parent) {
@@ -244,14 +244,14 @@ function runQuery() {
     // In Step 1 (Non-Atomic), searching for a single item fails because the cell is "A, B, C"
     // In Step 2 (Normalized), searching for a single item succeeds.
     
-    const results = policeData.filter(row => row.searched_rooms.toLowerCase() === query);
+    const results = DetectiveData.filter(row => row.searched_rooms.toLowerCase() === query);
     
     if (results.length > 0) {
         feedback.className = "search-feedback success";
         feedback.innerText = `QUERY SUCCESS: ${results.length} record(s) found for "${query}".`;
         
         // Highlight matching rows
-        const rows = document.querySelectorAll("#police-db tbody tr");
+        const rows = document.querySelectorAll("#Detective-db tbody tr");
         rows.forEach(row => {
             if (row.cells[2].innerText.toLowerCase() === query) {
                 row.style.backgroundColor = "rgba(39, 174, 96, 0.2)";
@@ -260,7 +260,7 @@ function runQuery() {
             }
         });
     } else {
-        const containsPartial = policeData.some(row => row.searched_rooms.toLowerCase().includes(query));
+        const containsPartial = DetectiveData.some(row => row.searched_rooms.toLowerCase().includes(query));
         feedback.className = "search-feedback error";
         if (containsPartial && currentStep === 1) {
             feedback.innerText = `QUERY ERROR: Exact match not found. The database cannot filter "${query}" because it is part of a non-atomic list. Normalize the data first.`;
@@ -280,7 +280,7 @@ function showSuccessUI() {
     const label = document.getElementById("step-label");
     if (label) label.innerText = "Step 3: Data Secured (1NF Compliance)";
 
-    const table = document.getElementById("police-db");
+    const table = document.getElementById("Detective-db");
     if (table) {
         table.classList.add("success-glow");
         const rows = table.querySelectorAll("tbody tr");
