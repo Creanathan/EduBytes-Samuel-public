@@ -141,6 +141,40 @@ function showRepairInterface() {
     renderTable();
 }
 
+function showGuide() {
+    document.getElementById("guide-modal").style.display = "flex";
+}
+
+function hideGuide() {
+    document.getElementById("guide-modal").style.display = "none";
+}
+
+function addRow() {
+    if (isUnlocked) return;
+    const newRow = {
+        log_id: "#NEW",
+        officer: "Det. User",
+        searched_rooms: "Empty"
+    };
+    DetectiveData.push(newRow);
+    localStorage.setItem('Detective_os_data', JSON.stringify(DetectiveData));
+    renderTable();
+}
+
+function deleteRow(index) {
+    if (isUnlocked) return;
+    DetectiveData.splice(index, 1);
+    localStorage.setItem('Detective_os_data', JSON.stringify(DetectiveData));
+    renderTable();
+}
+
+function editCell(index, field, newValue) {
+    if (isUnlocked) return;
+    DetectiveData[index][field] = newValue.trim();
+    localStorage.setItem('Detective_os_data', JSON.stringify(DetectiveData));
+    checkStepCondition(); // Real-time check
+}
+
 function renderTable() {
     const tbody = document.querySelector("#Detective-db tbody");
     const thead = document.querySelector("#Detective-db thead tr");
@@ -167,26 +201,20 @@ function renderTable() {
     DetectiveData.forEach((row, index) => {
         const tr = document.createElement("tr");
 
-        // Check if the cell has a comma (violates 1NF Atomicity)
-        const hasComma = row.searched_rooms.includes(",");
-        
         let displayRooms = row.searched_rooms;
         // Logic to reveal the 'Butler' clue only after normalization is fixed
         if (displayRooms.includes("ERR_DATA_BLOCK_772") && isUnlocked) {
             displayRooms = "Piano (UNSUCCESSFUL: Butler hid the key?)";
         }
 
-        let roomsCellHTML = "";
-        if (hasComma && currentStep === 1) {
-            roomsCellHTML = `<td class="corrupt-cell" onclick="splitData(${index})">${displayRooms}</td>`;
-        } else {
-            roomsCellHTML = `<td>${displayRooms}</td>`;
-        }
+        const isEditable = !isUnlocked;
+        const roomsClass = (displayRooms.includes(",") && currentStep === 1) ? "corrupt-cell" : "";
 
         tr.innerHTML = `
-            <td>${row.log_id}</td>
-            <td>${row.officer}</td>
-            ${roomsCellHTML}
+            <td contenteditable="${isEditable}" onblur="editCell(${index}, 'log_id', this.innerText)">${row.log_id}</td>
+            <td contenteditable="${isEditable}" onblur="editCell(${index}, 'officer', this.innerText)">${row.officer}</td>
+            <td contenteditable="${isEditable}" class="${roomsClass}" onblur="editCell(${index}, 'searched_rooms', this.innerText)">${displayRooms}</td>
+            ${!isUnlocked ? `<td><button onclick="deleteRow(${index})" style="background:none; border:none; color:var(--accent-red); cursor:pointer; font-size:10px;">[DEL]</button></td>` : ''}
         `;
         tbody.appendChild(tr);
     });
@@ -205,9 +233,12 @@ function toggleKey(colName) {
 }
 
 function splitData(index) {
+    // Keep this for backward compatibility if user clicks a comma-cell, but now we have manual edit too
     if (currentStep !== 1 || isUnlocked) return;
 
     const corruptRow = DetectiveData[index];
+    if (!corruptRow.searched_rooms.includes(",")) return;
+
     const roomsArray = corruptRow.searched_rooms.split(",").map(room => room.trim());
 
     DetectiveData.splice(index, 1);

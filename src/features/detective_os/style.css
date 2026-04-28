@@ -231,6 +231,44 @@ body::after {
     50% { border-color: rgba(192, 57, 43, 0.3); }
 }
 
+.btn-guide {
+    background: rgba(200, 134, 10, 0.2);
+    border: 1px solid var(--accent-amber);
+    color: var(--accent-amber);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: auto;
+}
+
+.btn-guide:hover {
+    background: var(--accent-amber);
+    color: #000;
+}
+
+.btn-add {
+    background: rgba(39, 174, 96, 0.1) !important;
+    border: 1px solid var(--accent-green) !important;
+    color: var(--accent-green) !important;
+    padding: 0 12px !important;
+    font-size: 10px !important;
+}
+
+.btn-add:hover {
+    background: var(--accent-green) !important;
+    color: #000 !important;
+}
+
+td[contenteditable="true"]:focus {
+    outline: 2px solid var(--accent-amber);
+    background: rgba(200, 134, 10, 0.1);
+    color: #fff;
+}
+
 .success-banner {
     background: var(--accent-green-dim);
     border-left: 3px solid var(--accent-green);
