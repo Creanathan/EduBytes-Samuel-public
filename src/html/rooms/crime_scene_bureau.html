@@ -11,8 +11,10 @@
         
         #usb-hitbox {
             position: absolute;
-            top: 75%; left: 74%; width: 10%; height: 10%;
+            top: 65%; left: 65%; width: 30%; height: 30%;
             cursor: pointer;
+            z-index: 1000;
+            /* border: 1px dashed rgba(255,255,255,0.5); */ /* Uncomment to see hitbox */
         }
     </style>
 </head>
@@ -72,6 +74,17 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log("[Bureau] DOMContentLoaded fired.");
             updateRoomState();
+            
+            // Debug: Log all clicks to help find coordinates
+            window.addEventListener('click', (e) => {
+                const layer = document.querySelector('.interactable-layer');
+                if (layer) {
+                    const rect = layer.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    console.log(`Click Coordinates -> left: ${x.toFixed(2)}%, top: ${y.toFixed(2)}%`);
+                }
+            });
         });
 
         function pickupUSB() {

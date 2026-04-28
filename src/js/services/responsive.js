@@ -39,7 +39,6 @@ window.ResponsiveScaler = {
         if (!bgImg || bgImg === 'none') return;
 
         const img = new Image();
-        img.src = bgImg;
         img.onload = () => {
             const imgRatio = img.width / img.height;
             const winWidth = window.innerWidth;
@@ -68,8 +67,13 @@ window.ResponsiveScaler = {
                 layer.style.height = actualHeight + 'px';
                 layer.style.left = offsetLeft + 'px';
                 layer.style.top = offsetTop + 'px';
+                console.log(`[Scaler] Synced: ${actualWidth.toFixed(0)}x${actualHeight.toFixed(0)} at ${offsetLeft.toFixed(0)},${offsetTop.toFixed(0)}`);
             }
         };
+        img.onerror = () => {
+            console.error(`[Scaler] Failed to load image for scaling: ${bgImg}`);
+        };
+        img.src = bgImg;
     }
 };
 
