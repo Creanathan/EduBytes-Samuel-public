@@ -4,14 +4,13 @@ Project assigment van Skill Integration Lab (semster).
 ## Leden
 - Jonathan Haesendonckx
 - Niels de Win 
-- Samuel Weyts
 - Tuur Neuts 
 
 ## Opzet
 ...
 
 ## Local hosting
-You can run the project locally from the `EduBytes_Samuel` folder.
+You can run the project locally from the `EduBytes` folder.
 
 1. Open a terminal in the project folder.
 2. Run `python -m http.server 8000` or `python3 -m http.server 8000`.
