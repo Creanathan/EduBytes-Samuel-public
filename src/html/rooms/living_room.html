@@ -9,6 +9,9 @@
         .room-background { 
             background-image: url('../../assets/rooms/Gemini_Generated_Image_toe8qrtoe8qrtoe8.png'); 
         }
+        .room-background.door-open { 
+            background-image: url('../../assets/rooms/Gemini_Generated_Image_iyo8huiyo8huiyo8.png') !important; 
+        }
         
         /* Hitboxes for the wide image (transformed from square-relative coordinates) */
         #obj-piano  { top: 38%; left: 52.8%; width: 22.3%; height: 45%; }
@@ -49,7 +52,7 @@
     function updateRoomToOpenState() {
         const bg = document.querySelector('.room-background');
         if (bg) {
-            bg.style.backgroundImage = "url('../../assets/rooms/Gemini_Generated_Image_iyo8huiyo8huiyo8.png')";
+            bg.classList.add('door-open');
         }
         
         const btn = document.getElementById('btn-top');
@@ -60,7 +63,9 @@
         if (doorHitbox) doorHitbox.style.display = 'none';
 
         // Notify responsive scaler to re-sync with new background
-        if (window.ResponsiveScaler) window.ResponsiveScaler.sync();
+        setTimeout(() => {
+            if (window.ResponsiveScaler) window.ResponsiveScaler.sync();
+        }, 100);
     }
 
     function handleDoorClick() {
