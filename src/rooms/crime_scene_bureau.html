@@ -6,15 +6,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/rooms.css">
     <style>
-        .room-background { background-image: url('../assets/rooms/crime_scene_bureau_USB.png'); }
-        .room-background.no-usb { background-image: url('../assets/rooms/crime_scene_bureau.png') !important; }
+        .room-background { 
+            background-image: url('../assets/rooms/crime_scene_bureau_USB.png'); 
+            pointer-events: none; /* Ensure background doesn't steal clicks */
+        }
+        .room-background.no-usb { 
+            background-image: url('../assets/rooms/crime_scene_bureau.png') !important; 
+        }
         
         #usb-hitbox {
             position: absolute;
-            top: 65%; left: 65%; width: 30%; height: 30%;
+            top: 75%; 
+            left: 70%; 
+            width: 15%; 
+            height: 15%;
             cursor: pointer;
             z-index: 1000;
-            /* border: 1px dashed rgba(255,255,255,0.5); */ /* Uncomment to see hitbox */
+            /* background: rgba(255,0,0,0.2); */ /* DEBUG: Remove in production */
         }
     </style>
 </head>
@@ -48,61 +56,68 @@
             const bg = document.querySelector('.room-background');
             const hitbox = document.getElementById('usb-hitbox');
             
-            console.log("[Bureau] Updating room state. Has USB:", Inventory.hasItem('usb_stick'));
+            const hasUSB = window.Inventory && window.Inventory.hasItem('usb_stick');
+            console.log("[Bureau] Updating room state. Has USB:", hasUSB);
 
-            if (Inventory.hasItem('usb_stick')) {
+            if (hasUSB) {
                 bg.classList.add('no-usb');
-                // Fallback direct style setting for GitHub Pages persistence
-                bg.style.backgroundImage = "url('../assets/rooms/crime_scene_bureau.png')";
+                // Force a hard refresh of the background image to bypass any cache or rendering glitch
+                const noUsbPath = '../assets/rooms/crime_scene_bureau.png';
+                bg.style.backgroundImage = `url('${noUsbPath}')`;
                 
-                if (hitbox) hitbox.style.display = 'none';
+                if (hitbox) {
+                    hitbox.style.pointerEvents = 'none';
+                    hitbox.style.display = 'none';
+                }
                 
-                console.log("[Bureau] USB found logic applied.");
-
-                // Force sync to update ambient background
-                setTimeout(() => { 
-                    if(window.ResponsiveScaler) {
-                        console.log("[Bureau] Syncing ambient background...");
-                        window.ResponsiveScaler.sync(); 
-                    }
-                }, 150);
+                console.log("[Bureau] USB state applied: Image should now be WITHOUT USB.");
             } else {
                 bg.classList.remove('no-usb');
-                if (hitbox) hitbox.style.display = 'block';
+                bg.style.backgroundImage = "url('../assets/rooms/crime_scene_bureau_USB.png')";
+                if (hitbox) {
+                    hitbox.style.pointerEvents = 'auto';
+                    hitbox.style.display = 'block';
+                }
+            }
+
+            // Sync ambient background
+            if (window.ResponsiveScaler) {
+                window.ResponsiveScaler.sync();
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("[Bureau] DOMContentLoaded fired.");
             updateRoomState();
             
-            // Debug: Log all clicks to help find coordinates
-            window.addEventListener('click', (e) => {
-                const layer = document.querySelector('.interactable-layer');
-                if (layer) {
-                    const rect = layer.getBoundingClientRect();
-                    const x = ((e.clientX - rect.left) / rect.width) * 100;
-                    const y = ((e.clientY - rect.top) / rect.height) * 100;
-                    console.log(`Click Coordinates -> left: ${x.toFixed(2)}%, top: ${y.toFixed(2)}%`);
-                }
-            });
+            // Listen for global inventory updates in case it changes elsewhere
+            window.addEventListener('inventoryUpdate', updateRoomState);
         });
 
         function pickupUSB() {
-            console.log("[Bureau] pickupUSB() clicked.");
-            if (Inventory.addItem('usb_stick')) {
-                console.log("[Bureau] Item added successfully.");
+            console.log("[Bureau] Interaction: Attempting to pickup USB.");
+            
+            if (!window.Inventory) {
+                console.error("[Bureau] Critical: Inventory service not found!");
+                return;
+            }
+
+            if (window.Inventory.addItem('usb_stick')) {
+                console.log("[Bureau] Success: USB added to inventory.");
+                
+                // Immediate visual feedback
                 updateRoomState();
 
-                if (window.showDialog) {
-                    window.showDialog("You found a USB stick on the desk. It might contain important data.");
-                } else if (window.DialogEngine) {
+                // Play narrative confirmation
+                if (window.DialogEngine) {
                     window.DialogEngine.playSequence([
-                        { speaker: "Detective", text: "Ow, let's look at the tablet" }
+                        { speaker: "Detective", text: "Got it. This encrypted drive should be the key to the registry data." },
+                        { speaker: "Detective", text: "I'll need to import this into my tablet to see the actual logs." }
                     ]);
+                } else if (window.showDialog) {
+                    window.showDialog("You collected the USB Stick. Use the Detective Tablet to import the data.");
                 }
             } else {
-                console.warn("[Bureau] addItem failed - item already in inventory.");
+                console.warn("[Bureau] USB already collected or could not be added.");
             }
         }
     </script>
