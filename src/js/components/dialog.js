@@ -112,10 +112,10 @@
         // Portrait mapping
         const name = dialog.speaker.toLowerCase();
         let portraitSrc = "";
-        if (name.includes("dekoning")) portraitSrc = "../../assets/images/characters/detective.png";
-        else if (name.includes("leduc") || name.includes("butler")) portraitSrc = "../../assets/images/characters/butler.png";
-        else if (name.includes("thomas")) portraitSrc = "../../assets/images/characters/thomas.png";
-        else if (name.includes("beatrix") || name.includes("lemur")) portraitSrc = "../../assets/images/characters/beatrix.png";
+        if (name.includes("dekoning")) portraitSrc = "../assets/images/characters/detective.png";
+        else if (name.includes("leduc") || name.includes("butler")) portraitSrc = "../assets/images/characters/butler.png";
+        else if (name.includes("thomas")) portraitSrc = "../assets/images/characters/thomas.png";
+        else if (name.includes("beatrix") || name.includes("lemur")) portraitSrc = "../assets/images/characters/beatrix.png";
 
         portraitImg.style.display = portraitSrc ? "block" : "none";
         if (portraitSrc) portraitImg.src = portraitSrc;
@@ -188,7 +188,13 @@
             } else if (part.startsWith("setBackground:")) {
                 const imgPath = part.split(":").slice(1).join(":");
                 const bg = document.querySelector(".room-background");
-                if (bg) bg.style.backgroundImage = `url('${imgPath}')`;
+                if (bg) {
+                    bg.style.backgroundImage = `url('${imgPath}')`;
+                    // Ensure ambient background is also updated
+                    if (window.ResponsiveScaler && window.ResponsiveScaler.sync) {
+                        setTimeout(() => window.ResponsiveScaler.sync(), 50);
+                    }
+                }
             } else if (part.startsWith("hideObj:")) {
                 const objId = part.split(":")[1];
                 const obj = document.getElementById(objId);

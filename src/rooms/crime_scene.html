@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crime Scene - EduBytes</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/rooms.css">
+    <style>
+        .room-background { background-image: url('../assets/rooms/crime_scene_main.png'); }
+        #obj-desk   { top: 45%; left: 55%; width: 20%; height: 20%; }
+    </style>
+</head>
+<body>
+    <div class="room-background-ambient"></div>
+    <div class="room-background"></div>
+    <h1>Crime Scene</h1>
+    
+    <div class="interactable-layer">
+        <div id="obj-desk"   class="clickable-object" onclick="goToLocation('crime_scene_bureau.html')" title="Examine Desk Area"></div>
+    </div>
+
+    <!-- UI Buttons -->
+    <button class="btn btn-primary ui-button position-fixed bottom-0 start-50 translate-middle-x mb-4" id="btn-bottom" onclick="goToLocation('hallway.html')"></button>
+
+    <script src="../js/core/gamestate.js"></script>
+    <script src="../js/core/routing.js"></script>
+    <script src="../js/core/responsive.js"></script>
+    <script src="../js/components/device_block.js"></script>
+    <script src="../js/components/movement.js"></script>
+    <script src="../js/components/audio.js"></script>
+    <script src="../js/components/game_menu.js"></script>
+    <script src="../js/components/tablet_widget.js"></script>
+    <script src="../js/core/inventory.js"></script>
+    <script src="../js/components/inventory_ui.js"></script>
+    <script src="../js/data/dialogs.js"></script>
+    <script src="../js/components/dialog.js"></script>
+    <script src="../js/components/dynamic_loading.js"></script>
+    <script>
+    </script>
+</body>
+</html>

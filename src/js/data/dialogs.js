@@ -297,7 +297,7 @@ const DIALOGS = {
                 lines: ["The Nanny's room. I have the key.", "The door is now open."],
                 options: [
                     { label: "Enter", action: "setFlag:nannys_room_unlocked|goTo:nannys_room.html" },
-                    { label: "Stay",  action: "setFlag:nannys_room_unlocked|setBackground:../../assets/rooms/Gemini_Generated_Image_iyo8huiyo8huiyo8.png|showBtn:btn-top|hideObj:obj-door|playSound:door|exit" }
+                    { label: "Stay",  action: "setFlag:nannys_room_unlocked|setBackground:../assets/rooms/living_room_open.png|showBtn:btn-top|hideObj:obj-door|playSound:door|exit" }
                 ]
             },
             {
@@ -313,7 +313,7 @@ const DIALOGS = {
             lines: ["The Nanny's room. I have the key.", "The door is now open."],
             options: [
                 { label: "Enter", action: "setFlag:nannys_room_unlocked|goTo:nannys_room.html" },
-                { label: "Stay",  action: "setFlag:nannys_room_unlocked|setBackground:../../assets/rooms/Gemini_Generated_Image_iyo8huiyo8huiyo8.png|showBtn:btn-top|hideObj:obj-door|playSound:door|exit" }
+                { label: "Stay",  action: "setFlag:nannys_room_unlocked|setBackground:../assets/rooms/living_room_open.png|showBtn:btn-top|hideObj:obj-door|playSound:door|exit" }
             ]
         },
 

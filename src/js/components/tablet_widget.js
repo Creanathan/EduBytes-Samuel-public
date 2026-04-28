@@ -353,9 +353,8 @@
         // Robust pathing: find the root by splitting at 'src/'
         const currentURL = window.location.href;
         const rootURL = currentURL.split('/src/')[0];
-        // Adding a trailing slash to ensure relative assets (style.css, logic.js) 
-        // inside the iframe resolve correctly in hosted environments.
-        iframe.src = rootURL + "/src/normalization_demo/";
+        // Updated path after refactoring
+        iframe.src = rootURL + "/src/docs/demo/";
         
         // Trigger animation
         setTimeout(() => {

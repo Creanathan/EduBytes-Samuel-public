@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police OS - Case File Database</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Android Status Bar -->
+    <div class="android-statusbar">
+        <div class="statusbar-left">
+            <span>POLICE OS v2.1</span>
+            <div class="status-dot"></div>
+            <span>SECURE CONNECTION</span>
+        </div>
+        <div class="statusbar-right">
+            <span id="status-time">--:--</span>
+        </div>
+    </div>
+
+    <!-- App Header -->
+    <div class="app-header">
+        <div class="app-logo">
+            <div class="app-logo-icon">🔍</div>
+            <div>
+                <div class="app-title">Police OS</div>
+                <div class="app-subtitle" id="step-label">Step 1: Achieving Atomicity (1NF)</div>
+            </div>
+        </div>
+        <button class="exit-btn" onclick="closeTablet()">
+            EXIT
+        </button>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="content-area" id="main-interface" style="display: none;">
+        <!-- Error Banner (Normalization Steps) -->
+        <div id="error-banner" class="error-banner">
+            <div class="error-icon">⚠</div>
+            <div>
+                <div class="error-title" id="error-title">1NF Integrity Fault</div>
+                <div id="error-text">Atomic cell violation detected. Tap corrupted entries to split rows and normalize data.</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Setup/Import Screen -->
+    <div id="setup-screen" class="setup-screen">
+        <div class="setup-card">
+            <div id="setup-status-icon" class="setup-icon">📡</div>
+            <h2 id="setup-title">No Data Source Detected</h2>
+            <p id="setup-text">Please scan or import physical police registries to begin normalization.</p>
+            <button id="import-btn" class="btn-import" onclick="startImport()" style="display: none;">
+                IMPORT POLICE LEDGER
+            </button>
+        </div>
+    </div>
+
+        <!-- Database Section -->
+        <div class="db-section">
+            <div class="search-container">
+                <input type="text" id="db-search" placeholder="Query registry (e.g. 'Piano')...">
+                <button onclick="runQuery()">SEARCH</button>
+            </div>
+            <div id="search-feedback" class="search-feedback"></div>
+
+            <div class="db-label">DATABASE: Search_Log_Registry</div>
+
+            <table id="police-db">
+                <thead>
+                    <tr>
+                        <th>Log_ID</th>
+                        <th>Officer</th>
+                        <th>Searched_Rooms</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Populated via logic.js -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Success Banner -->
+        <div id="success-banner" class="success-banner" style="display: none;">
+            <div class="success-icon">✓</div>
+            <div>
+                <div class="success-title">Normalization Success</div>
+                <div>1NF compliance reached. Case file updated in registry.</div>
+                <button class="btn-continue" onclick="closeTablet()">Close Tablet</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="logic.js"></script>
+    <script>
+        // Live clock in status bar
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('status-time').textContent = h + ':' + m;
+        }
+        updateClock();
+        setInterval(updateClock, 30000);
+
+        function closeTablet() {
+            // If we are in an iframe, tell the parent to close us
+            if (window !== window.parent) {
+                window.parent.postMessage({ type: 'closeTablet' }, '*');
+            } else {
+                // Standalone mode: just go back
+                window.history.back();
+            }
+        }
+
+        // Listen for Up arrow / W key / Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "ArrowUp" || event.key === "w" || event.key === "W" || event.key === "Escape") {
+                closeTablet();
+            }
+        });
+    </script>
+
+</body>
+</html>

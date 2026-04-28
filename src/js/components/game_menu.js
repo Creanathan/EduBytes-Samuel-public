@@ -186,6 +186,12 @@
                     <input type="range" id="volume-slider" min="0" max="1" step="0.05">
                     <div class="mute-btn" id="mute-btn">Mute Audio</div>
                 </div>
+                <button type="button" class="menu-item" id="menu-tablet-btn">
+                    <span>\uD83D\uDDA5 Police Tablet</span>
+                </button>
+                <button type="button" class="menu-item" id="menu-inventory-btn">
+                    <span>\uD83D\uDCBC Inventory</span>
+                </button>
                 <button type="button" class="menu-item" id="main-menu-btn">
                     <span>\uD83C\uDFE0 Home</span>
                 </button>
@@ -218,12 +224,36 @@
                 return;
             }
 
+            if (menuItem.id === 'menu-tablet-btn') {
+                closeMenu();
+                if (window.TabletWidget && window.TabletWidget.toggle) {
+                    window.TabletWidget.toggle();
+                } else {
+                    console.error("TabletWidget not loaded.");
+                }
+                return;
+            }
+
+            if (menuItem.id === 'menu-inventory-btn') {
+                closeMenu();
+                if (window.InventoryUI && window.InventoryUI.toggle) {
+                    window.InventoryUI.toggle();
+                } else {
+                    console.error("InventoryUI not loaded.");
+                }
+                return;
+            }
+
             if (menuItem.id === 'main-menu-btn') {
                 closeMenu();
-                const currentPath = window.location.pathname;
-                const roomsDir = currentPath.substring(0, currentPath.lastIndexOf('/'));
-                const htmlDir = roomsDir.substring(0, roomsDir.lastIndexOf('/'));
-                window.location.href = htmlDir + '/start.html';
+                // Navigate to root index.html using a robust relative path
+                const depth = window.location.pathname.split('/').filter(p => p).length;
+                // If in src/rooms/ (depth 2 or 3 depending on root)
+                if (window.location.pathname.includes('/src/rooms/')) {
+                    window.location.href = '../../index.html';
+                } else {
+                    window.location.href = './index.html';
+                }
             }
         });
 

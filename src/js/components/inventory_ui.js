@@ -251,4 +251,20 @@
     } else {
         buildInventoryUI();
     }
+    // Expose for external access (e.g., Hamburger Menu)
+    window.InventoryUI = {
+        toggle: () => {
+            const drawer = document.getElementById('inventory-drawer');
+            if (drawer) {
+                // Manually trigger the transition logic since buildInventoryUI is local
+                if (drawer.classList.contains('active')) {
+                    drawer.classList.remove('active');
+                    setTimeout(() => drawer.style.display = 'none', 300);
+                } else {
+                    drawer.style.display = 'block';
+                    setTimeout(() => drawer.classList.add('active'), 10);
+                }
+            }
+        }
+    };
 })();

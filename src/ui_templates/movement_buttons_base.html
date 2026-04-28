@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Base Movement Buttons</title>
+    <link href="./css/base/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Helper to center the side/middle buttons perfectly */
+        .translate-middle-y { transform: translateY(-50%); }
+        .translate-middle-x { transform: translateX(-50%); }
+    </style>
+</head>
+<body>
+<button class="btn btn-primary position-fixed top-0 start-0 m-3" id="btn-top-left">TOP_LEFT</button>
+<button class="btn btn-primary position-fixed top-0 start-50 translate-middle-x mt-3" id="btn-top">TOP</button>
+<button class="btn btn-primary position-fixed top-0 end-0 m-3" id="btn-top-right">TOP_RIGHT</button>
+
+<button class="btn btn-primary position-fixed top-50 start-0 translate-middle-y ms-3" id="btn-left">LEFT</button>
+<button class="btn btn-primary position-fixed top-50 end-0 translate-middle-y me-3" id="btn-right">RIGHT</button>
+
+<button class="btn btn-primary position-fixed bottom-0 start-0 m-3" id="btn-bottom-left">BOTTOM_LEFT</button>
+<button class="btn btn-primary position-fixed bottom-0 start-50 translate-middle-x mb-3" id="btn-bottom">BOTTOM</button>
+<button class="btn btn-primary position-fixed bottom-0 end-0 m-3" id="btn-bottom-right">BOTTOM_RIGHT</button>
+
+<script src="./js/components/movement.js"></script>
+</body>
+</html>
