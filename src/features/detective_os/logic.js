@@ -13,18 +13,36 @@ const DEFAULT_DATA = [
     { log_id: "#005", subject: "System Registry", observation: "Piano (ERR_DATA_BLOCK_772: HIDDEN_RESTRICTED)" }
 ];
 
+// State Variables
+let DetectiveData = [];
+let isUnlocked = false;
+let isImported = false;
 let currentStep = 1; // 1: Atomicity, 2: Primary Key
-let selectedKeys = new Set(); // For Step 2
+let selectedKeys = new Set(); 
+let originalCellValue = ""; 
 
-// Load saved data - Start EMPTY if no data is found in storage
-let DetectiveData = JSON.parse(localStorage.getItem('Detective_os_data')) || [];
-let isUnlocked = localStorage.getItem('Detective_os_unlocked') === 'true';
-let isImported = localStorage.getItem('Detective_os_imported') === 'true' || DetectiveData.length > 0;
+// Load saved data
+function loadState() {
+    const savedData = localStorage.getItem('Detective_os_data');
+    DetectiveData = savedData ? JSON.parse(savedData) : [];
+    isUnlocked = localStorage.getItem('Detective_os_unlocked') === 'true';
+    isImported = localStorage.getItem('Detective_os_imported') === 'true';
+    
+    // Determine current step based on state
+    if (isUnlocked) {
+        currentStep = 3; // Finished
+    } else if (isImported && DetectiveData.length > 0) {
+        const hasCommas = DetectiveData.some(row => row.observation.includes(","));
+        currentStep = hasCommas ? 1 : 2;
+    } else {
+        currentStep = 1;
+    }
+}
 
 // Initialize UI
 document.addEventListener("DOMContentLoaded", () => {
+    loadState();
     checkSetup();
-    if (isUnlocked) currentStep = 2; 
     renderTable();
 });
 
@@ -385,11 +403,13 @@ function runQuery() {
         return;
     }
 
+    feedback.style.display = "block";
+
     // Educational Logic: 
     // In Step 1 (Non-Atomic), searching for a single item fails because the cell is "A, B, C"
     // In Step 2 (Normalized), searching for a single item succeeds.
     
-    const results = DetectiveData.filter(row => row.searched_rooms.toLowerCase() === query);
+    const results = DetectiveData.filter(row => row.observation.toLowerCase() === query);
     
     if (results.length > 0) {
         feedback.className = "search-feedback success";
@@ -405,7 +425,7 @@ function runQuery() {
             }
         });
     } else {
-        const containsPartial = DetectiveData.some(row => row.searched_rooms.toLowerCase().includes(query));
+        const containsPartial = DetectiveData.some(row => row.observation.toLowerCase().includes(query));
         feedback.className = "search-feedback error";
         if (containsPartial && currentStep === 1) {
             feedback.innerText = `QUERY ERROR: Exact match not found. The database cannot filter "${query}" because it is part of a non-atomic list. Normalize the data first.`;
