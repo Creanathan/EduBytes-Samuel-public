@@ -16,14 +16,15 @@ const DEFAULT_DATA = [
 let currentStep = 1; // 1: Atomicity, 2: Primary Key
 let selectedKeys = new Set(); // For Step 2
 
-// Load saved data or use default
-let policeData = JSON.parse(localStorage.getItem('police_os_data')) || DEFAULT_DATA;
+// Load saved data - Start EMPTY if no data is found in storage
+let policeData = JSON.parse(localStorage.getItem('police_os_data')) || [];
 let isUnlocked = localStorage.getItem('police_os_unlocked') === 'true';
+let isImported = localStorage.getItem('police_os_imported') === 'true' || policeData.length > 0;
 
 // Initialize UI
 document.addEventListener("DOMContentLoaded", () => {
     checkSetup();
-    if (isUnlocked) currentStep = 2; // If already solved, just show success
+    if (isUnlocked) currentStep = 2; 
     renderTable();
 });
 
@@ -35,39 +36,75 @@ function checkSetup() {
     const text = document.getElementById("setup-text");
     const icon = document.getElementById("setup-status-icon");
 
-    // If already unlocked, skip setup
-    if (isUnlocked) {
+    // If already imported, show the main interface
+    if (isImported) {
         setupScreen.style.display = "none";
         mainInterface.style.display = "block";
         return;
     }
 
-    // Check parent inventory for the ledger
-    const hasLedger = window.parent.Inventory && window.parent.Inventory.hasItem('police_ledger');
+    // Check parent inventory for data sources
+    const hasLedger = window.parent.Inventory && window.parent.Inventory.hasItem('ledger');
+    const hasUSB = window.parent.Inventory && window.parent.Inventory.hasItem('usb_stick');
 
-    if (hasLedger) {
-        icon.innerText = "📁";
+    if (hasUSB) {
+        icon.innerText = "\uD83D\uDCBE";
+        title.innerText = "Encrypted USB Detected";
+        text.innerText = "Encrypted drive found in port. Manual decryption and import required to extract the crime scene registry.";
+        importBtn.innerText = "DECRYPT & IMPORT";
+        importBtn.style.display = "block";
+    } else if (hasLedger) {
+        icon.innerText = "\uD83D\uDCC1";
         title.innerText = "Data Ledger Detected";
-        text.innerText = "Physical police registries found. Ready to import into local registry for normalization.";
+        text.innerText = "Physical police registries found. Ready to scan and import into local registry for normalization.";
+        importBtn.innerText = "SCAN & IMPORT";
         importBtn.style.display = "block";
     } else {
-        icon.innerText = "📡";
+        icon.innerText = "\uD83D\uDCE1";
         title.innerText = "No Data Source Detected";
-        text.innerText = "Please obtain the physical police registries (Police Ledger) from Thomas Souvellier to begin analysis.";
+        text.innerText = "Police OS is online but local registries are empty. Please obtain a data source (Ledger or USB) to begin analysis.";
         importBtn.style.display = "none";
     }
 }
 
 function startImport() {
-    const setupScreen = document.getElementById("setup-screen");
-    const mainInterface = document.getElementById("main-interface");
+    const importBtn = document.getElementById("import-btn");
+    const text = document.getElementById("setup-text");
+    const icon = document.getElementById("setup-status-icon");
     
-    setupScreen.style.animation = "slideDown 0.5s reverse forwards";
-    setTimeout(() => {
-        setupScreen.style.display = "none";
-        mainInterface.style.display = "block";
-        mainInterface.style.animation = "slideDown 0.5s forwards";
-    }, 500);
+    importBtn.disabled = true;
+    importBtn.style.opacity = "0.5";
+    
+    let progress = 0;
+    icon.classList.add("pulse-fast");
+    
+    const interval = setInterval(() => {
+        progress += 5;
+        text.innerText = `UPLINK IN PROGRESS... ${progress}%`;
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            completeImport();
+        }
+    }, 50); // Simulate fast digital transfer
+
+    function completeImport() {
+        isImported = true;
+        policeData = [...DEFAULT_DATA]; // Load the default dirty data
+        localStorage.setItem('police_os_imported', 'true');
+        localStorage.setItem('police_os_data', JSON.stringify(policeData));
+
+        const setupScreen = document.getElementById("setup-screen");
+        const mainInterface = document.getElementById("main-interface");
+        
+        setupScreen.style.animation = "slideDown 0.5s reverse forwards";
+        setTimeout(() => {
+            setupScreen.style.display = "none";
+            mainInterface.style.display = "block";
+            mainInterface.style.animation = "slideDown 0.5s forwards";
+            renderTable();
+        }, 500);
+    }
 }
 
 function renderTable() {
