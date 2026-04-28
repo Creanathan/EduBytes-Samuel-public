@@ -246,10 +246,12 @@
 
             if (menuItem.id === 'main-menu-btn') {
                 closeMenu();
-                // Navigate to root index.html using a robust relative path
-                const depth = window.location.pathname.split('/').filter(p => p).length;
-                // If in src/rooms/ (depth 2 or 3 depending on root)
-                if (window.location.pathname.includes('/src/rooms/')) {
+                // Robust navigation: find the root index by looking for 'src' in the path
+                const currentHref = window.location.href;
+                if (currentHref.includes('/src/rooms/')) {
+                    window.location.href = '../../index.html';
+                } else if (currentHref.includes('/src/html/')) {
+                    // Handle potential alternative structure
                     window.location.href = '../../index.html';
                 } else {
                     window.location.href = './index.html';
@@ -288,7 +290,8 @@
         });
 
         function updateMuteState() {
-            const muted = window.AudioEngine.isMuted();
+            if (!window.AudioEngine) return;
+            const muted = typeof window.AudioEngine.isMuted === 'function' ? window.AudioEngine.isMuted() : false;
             muteBtn.textContent = muted ? 'Unmute Audio' : 'Mute Audio';
             muteBtn.classList.toggle('active', muted);
         }
