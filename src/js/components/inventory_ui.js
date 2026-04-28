@@ -91,79 +91,80 @@
             }
 
             .drawer-header {
-                padding: 12px 16px;
-                background: rgba(200, 134, 10, 0.1);
+                padding: 16px 20px;
+                background: rgba(200, 134, 10, 0.05);
                 border-bottom: 1px solid rgba(200, 134, 10, 0.1);
                 font-family: 'Segoe UI', sans-serif;
-                font-size: 11px;
+                font-size: 13px;
                 text-transform: uppercase;
-                letter-spacing: 2px;
+                letter-spacing: 3px;
                 color: #c8860a;
+                font-weight: 700;
                 display: flex;
-                justify-content: space-between;
+                justify-content: center;
                 align-items: center;
             }
 
             .drawer-content {
-                max-height: 300px;
+                max-height: 380px;
                 overflow-y: auto;
-                padding: 12px;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
             }
 
             .inventory-item {
                 display: flex;
                 align-items: center;
-                gap: 12px;
-                padding: 10px;
-                background: rgba(255,255,255,0.03);
-                border-radius: 6px;
-                margin-bottom: 8px;
-                border: 1px solid transparent;
-                transition: all 0.2s;
+                gap: 14px;
+                padding: 12px 16px;
+                background: rgba(255,255,255,0.02);
+                border-radius: 10px;
+                border: 1px solid rgba(255,255,255,0.05);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 cursor: default;
             }
 
             .inventory-item.interactive {
                 cursor: pointer;
+                background: rgba(200, 134, 10, 0.03);
                 border-color: rgba(200, 134, 10, 0.1);
             }
 
             .inventory-item.interactive:hover {
-                background: rgba(200, 134, 10, 0.1);
-                border-color: rgba(200, 134, 10, 0.4);
+                background: rgba(200, 134, 10, 0.08);
+                border-color: rgba(200, 134, 10, 0.3);
+                transform: translateX(4px);
             }
 
             .item-thumb {
-                width: 32px;
-                height: 32px;
-                background: rgba(0,0,0,0.3);
-                border-radius: 4px;
+                width: 36px;
+                height: 36px;
+                background: rgba(0,0,0,0.4);
+                border-radius: 8px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 18px;
+                font-size: 20px;
+                border: 1px solid rgba(255,255,255,0.05);
             }
 
             .item-name {
-                font-size: 13px;
-                color: rgba(255,255,255,0.8);
+                font-size: 14px;
+                color: rgba(255,255,255,0.9);
                 font-family: 'Segoe UI', sans-serif;
-            }
-
-            .special-item-label {
-                font-size: 9px;
-                color: #c8860a;
-                font-weight: bold;
-                margin-bottom: 8px;
-                opacity: 0.7;
+                letter-spacing: 0.5px;
+                font-weight: 500;
             }
 
             .empty-msg {
                 text-align: center;
-                padding: 24px;
-                color: rgba(255,255,255,0.3);
+                padding: 30px;
+                color: rgba(255,255,255,0.25);
                 font-size: 12px;
                 font-style: italic;
+                letter-spacing: 1px;
             }
         `;
         document.head.appendChild(style);
@@ -171,10 +172,10 @@
         // Build Widget
         const widget = document.createElement('div');
         widget.id = 'inventory-widget';
-        widget.title = 'Open Evidence Bag (Inventory)';
+        widget.title = 'Open Inventory';
         widget.innerHTML = `
             <div class="inventory-button">
-                <span class="inventory-icon">🎒</span>
+                <span class="inventory-icon">💼</span>
                 <div class="inventory-badge" id="inventory-count-badge">0</div>
             </div>
         `;
@@ -184,8 +185,7 @@
         drawer.id = 'inventory-drawer';
         drawer.innerHTML = `
             <div class="drawer-header">
-                <span>Evidence Bag</span>
-                <span style="opacity: 0.5; font-size: 9px;">Investigation Tools</span>
+                <span>Inventory</span>
             </div>
             <div class="drawer-content" id="inventory-items-container">
                 <!-- Items injected here -->
@@ -242,19 +242,15 @@
             const container = document.getElementById('inventory-items-container');
             const items = (window.Inventory ? window.Inventory.getItems() : []).filter(i => typeof i === 'string');
             
-            // Start with permanent tools
+            // Start with permanent tools (No more labels)
             let html = `
-                <div class="special-item-label">TOOLS</div>
                 <div class="inventory-item interactive" onclick="window.openTabletFromInv()">
                     <div class="item-thumb">📱</div>
                     <div class="item-name">Detective Tablet</div>
                 </div>
-                <div class="special-item-label" style="margin-top: 16px;">COLLECTED EVIDENCE</div>
             `;
 
-            if (items.length === 0) {
-                html += '<div class="empty-msg">No evidence collected yet.</div>';
-            } else {
+            if (items.length > 0) {
                 html += items.map(id => {
                     const data = ITEM_MAP[id] || { name: id.replace(/_/g, ' '), icon: '🔎' };
                     return `
