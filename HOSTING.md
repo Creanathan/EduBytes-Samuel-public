@@ -22,7 +22,7 @@ start-local-host.bat 8080
 - If `python` is not installed, install Python 3 and make sure it is available in your PATH.
 
 ## Published online
-- Public repository: https://github.com/Creanathan/EduBytes-Samuel-public
-- GitHub Pages site: https://creanathan.github.io/EduBytes-Samuel-public/
+- Public repository: https://github.com/Creanathan/EduBytes
+- GitHub Pages site: https://creanathan.github.io/EduBytes/
 
 The site is configured to serve from the `main` branch root. It may take a few minutes for the Pages build to finish and become live.
