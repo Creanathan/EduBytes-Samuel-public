@@ -54,7 +54,7 @@ This document standardizes the narrative, characters, and investigative mechanic
 ## 4. Chapter Overview
 
 *   **Chapter 1: The Arrival**: Meet the suspects, explore the ground floor, and gain access to the Crime Scene.
-*   **Chapter 2: The Digital Trail**: Louis finds the police tablet. Solve the **1NF Normalization Puzzle** to fix the "corrupted" search registry.
+*   **Chapter 2: The ponder**: Search through the secrets of the house.
 *   **Chapter 3: The Nanny's Secrets**: Use the decrypted logs to find the Nanny's key. Investigate her room and confront her.
 *   **Chapter 4: The Professor's Quarters**: Investigate Thomas' room. First escalation of the case.
 *   **Chapter 5: Confluence (Dreamspace)**: An imaginative, high-fidelity interrogation sequence where Louis pieces the final clues together.
@@ -64,9 +64,18 @@ This document standardizes the narrative, characters, and investigative mechanic
 
 ## 5. Interaction Standards
 
-### Logic Guards
+### Logic Guards 
 *   **Crime Scene**: Locked until the Butler (Leduc) grants permission.
 *   **Nanny's Room**: Locked until the 1NF puzzle is solved and the key is recovered from the Piano.
+* TBI **Police Tablet**: Says 'no entries' until player finds dongle at the crime scene.
+* TBI **Upstairs**: Locked until Thomas Souvellier asks Louis if Louis has checked upstairs. --> Going up triggers titlescreen + credits
+
+### Police Ledger
+* TBI **Crime Scene**: Knife ("knife" used as primary key for multiple entrees eg. type, where located in house, age of blood) --> indicator that you should use the ledger.
+* TBI **Hallway**: Nothing.
+* TBI **Living room**: Current edit
+* TBI **Nursery**: Meerdere tabellen in één kolom (eg. 3 babies in kolom mensen)
+* TBI **Outside**: Nothing.
 
 ### Educational Mechanic (1NF)
 *   **Problem**: Multiple entries (rooms) in single database cells.
