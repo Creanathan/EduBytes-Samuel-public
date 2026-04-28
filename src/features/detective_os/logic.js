@@ -154,10 +154,29 @@ function showRepairInterface() {
 
 function resetData() {
     if (confirm("WARNING: This will wipe your current database and re-import from the source. Proceed?")) {
+        // Clear LocalStorage
         localStorage.removeItem('Detective_os_imported');
         localStorage.removeItem('Detective_os_data');
         localStorage.removeItem('Detective_os_unlocked');
-        location.reload(); // Hard reset
+        
+        // Reset In-Memory State
+        DetectiveData = [];
+        isImported = false;
+        isUnlocked = false;
+        currentStep = 1;
+        selectedKeys.clear();
+
+        // UI Reset
+        document.getElementById("main-interface").style.display = "none";
+        document.getElementById("crash-screen").style.display = "none";
+        document.getElementById("loading-screen").style.display = "none";
+        document.getElementById("success-banner").style.display = "none";
+        document.getElementById("error-banner").style.display = "flex";
+        document.getElementById("reimport-btn-header").style.display = "none";
+        
+        checkSetup();
+        renderTable();
+        showToast("DATABASE WIPED");
     }
 }
 
@@ -173,6 +192,14 @@ function handleKey(event, index, field) {
         event.preventDefault();
         event.target.blur(); // Triggers editCell via onblur
     }
+    if (event.key === "Escape") {
+        event.target.innerText = originalCellValue; // Revert
+        event.target.blur();
+    }
+}
+
+function onFocusCell(event) {
+    originalCellValue = event.target.innerText;
 }
 
 function addRow() {
@@ -212,6 +239,7 @@ function editCell(index, field, newValue) {
 function renderTable() {
     const tbody = document.querySelector("#Detective-db tbody");
     const thead = document.querySelector("#Detective-db thead tr");
+    if (!tbody) return;
     tbody.innerHTML = ""; 
 
     // Step 2 Header Interaction
@@ -245,9 +273,9 @@ function renderTable() {
         const obsClass = (displayObs.includes(",") && currentStep === 1) ? "corrupt-cell" : "";
 
         tr.innerHTML = `
-            <td contenteditable="${isEditable}" onkeydown="handleKey(event, ${index}, 'log_id')" onblur="editCell(${index}, 'log_id', this.innerText)">${row.log_id}</td>
-            <td contenteditable="${isEditable}" onkeydown="handleKey(event, ${index}, 'subject')" onblur="editCell(${index}, 'subject', this.innerText)">${row.subject}</td>
-            <td contenteditable="${isEditable}" class="${obsClass}" onkeydown="handleKey(event, ${index}, 'observation')" onblur="editCell(${index}, 'observation', this.innerText)">${displayObs}</td>
+            <td contenteditable="${isEditable}" onfocus="onFocusCell(event)" onkeydown="handleKey(event, ${index}, 'log_id')" onblur="editCell(${index}, 'log_id', this.innerText)">${row.log_id}</td>
+            <td contenteditable="${isEditable}" onfocus="onFocusCell(event)" onkeydown="handleKey(event, ${index}, 'subject')" onblur="editCell(${index}, 'subject', this.innerText)">${row.subject}</td>
+            <td contenteditable="${isEditable}" class="${obsClass}" onfocus="onFocusCell(event)" onkeydown="handleKey(event, ${index}, 'observation')" onblur="editCell(${index}, 'observation', this.innerText)">${displayObs}</td>
             ${!isUnlocked ? `<td><button onclick="deleteRow(${index})" style="background:none; border:none; color:var(--accent-red); cursor:pointer; font-size:10px;">[DEL]</button></td>` : ''}
         `;
         tbody.appendChild(tr);
