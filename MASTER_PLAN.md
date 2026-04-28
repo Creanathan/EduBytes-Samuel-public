@@ -3,7 +3,13 @@
 ## Current Status
 - Reset local codebase to match the remote `Creanathan/EduBytes` branch `main`.
 - Cleaned up local modifications.
+- Modified `game_menu.js` to exactly match `COLOR_PALETTE.md` and replaced "Main Menu" with "Home" + icon.
+- Added a "Restart" button to the main start screen (`start.html`) with confirmation logic.
+- Pulled latest changes from `Creanathan/EduBytes` and pushed the new modifications back to the remote.
 
 ## Objectives
 - [x] Synchronize with `Creanathan/EduBytes`
+- [x] Update game menu styling and text
+- [x] Implement Restart logic on the start screen
+- [x] Push and merge changes to the remote repository
 - [ ] Next steps (to be determined based on new requirements)
