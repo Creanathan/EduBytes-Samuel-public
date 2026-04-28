@@ -84,6 +84,10 @@ function checkSetup() {
         return;
     }
 
+    // Show setup screen for fresh import
+    setupScreen.style.display = "flex";
+    reimportBtn.style.display = "none";
+
     // Robust item check (Parent -> LocalStorage fallback)
     const hasLedger = checkInventoryLocal('ledger');
     const hasUSB = checkInventoryLocal('usb_stick');
