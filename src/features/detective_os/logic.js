@@ -28,6 +28,29 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTable();
 });
 
+function checkInventoryLocal(id) {
+    // 1. Try parent access (preferred)
+    try {
+        if (window.parent && window.parent.Inventory && typeof window.parent.Inventory.hasItem === 'function') {
+            return window.parent.Inventory.hasItem(id);
+        }
+    } catch (e) {
+        console.warn("[Tablet] Parent inventory access blocked (CORS). Falling back to localStorage.");
+    }
+
+    // 2. Fallback: Direct localStorage check (for local file:// testing)
+    try {
+        const invData = localStorage.getItem('edubytes_inventory');
+        if (invData) {
+            const items = JSON.parse(invData);
+            return Array.isArray(items) && items.includes(id);
+        }
+    } catch (e) {
+        console.error("[Tablet] Failed to read inventory from localStorage.");
+    }
+    return false;
+}
+
 function checkSetup() {
     const setupScreen = document.getElementById("setup-screen");
     const mainInterface = document.getElementById("main-interface");
@@ -50,9 +73,9 @@ function checkSetup() {
         return;
     }
 
-    // Check parent inventory for data sources
-    const hasLedger = window.parent.Inventory && window.parent.Inventory.hasItem('ledger');
-    const hasUSB = window.parent.Inventory && window.parent.Inventory.hasItem('usb_stick');
+    // Robust item check (Parent -> LocalStorage fallback)
+    const hasLedger = checkInventoryLocal('ledger');
+    const hasUSB = checkInventoryLocal('usb_stick');
 
     if (hasUSB) {
         icon.innerText = "\uD83D\uDCBE";
@@ -60,17 +83,21 @@ function checkSetup() {
         text.innerText = "Encrypted drive found in port. Manual decryption and import required to extract the crime scene registry.";
         importBtn.innerText = "DECRYPT & IMPORT";
         importBtn.style.display = "block";
+        importBtn.onclick = startImport;
     } else if (hasLedger) {
         icon.innerText = "\uD83D\uDCC1";
         title.innerText = "Data Ledger Detected";
         text.innerText = "Physical Detective registries found. Ready to scan and import into local registry for normalization.";
         importBtn.innerText = "SCAN & IMPORT";
         importBtn.style.display = "block";
+        importBtn.onclick = startImport;
     } else {
         icon.innerText = "\uD83D\uDCE1";
         title.innerText = "No Data Source Detected";
         text.innerText = "Detective OS is online but local registries are empty. Please obtain a data source (Ledger or USB) to begin analysis.";
-        importBtn.style.display = "none";
+        importBtn.innerText = "RESCAN SYSTEM";
+        importBtn.style.display = "block";
+        importBtn.onclick = checkSetup;
     }
 }
 
