@@ -16,6 +16,10 @@ Contains all playable room files.
 - `outside.html`, `hallway.html`, etc.
 - `/snippets`: HTML fragments for interactive objects or dynamic content (e.g., `hallway_interactable_texts.html`).
 
+### /src/features
+Modular sub-applications and standalone puzzle interfaces.
+- `/detective_os`: The 1NF Normalization puzzle / Tablet App.
+
 ### /src/js — JavaScript Logic
 - `/core`: Essential game services. Must be loaded in order.
     - `gamestate.js`: Persistence and flag management.

@@ -353,8 +353,8 @@
         // Robust pathing: find the root by splitting at 'src/'
         const currentURL = window.location.href;
         const rootURL = currentURL.split('/src/')[0];
-        // Updated path after refactoring
-        iframe.src = rootURL + "/src/docs/demo/";
+        // Updated path after cleaning up src/docs
+        iframe.src = rootURL + "/src/features/detective_os/";
         
         // Trigger animation
         setTimeout(() => {
