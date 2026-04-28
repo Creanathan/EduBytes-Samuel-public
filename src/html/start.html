@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NormaLIES — A Noir Detective Mystery by EduBytes. Investigate the Dégrasse mansion and solve the case.">
+    <title>NormaLIES — Start</title>
+    <link rel="stylesheet" href="../css/start.css">
+</head>
+<body>
+
+    <!-- Atmospheric Background -->
+    <div class="start-bg"></div>
+    <div class="vignette"></div>
+
+    <!-- ── Main Menu ─────────────────────────── -->
+    <div class="start-container" id="start-menu">
+        <div class="title-group">
+            <p class="title-label">EduBytes presents</p>
+            <h1 class="title-main">
+                NormaLIES
+                <span>A Noir Detective Mystery</span>
+            </h1>
+            <div class="title-divider"></div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-noir btn-play" id="btn-play" onclick="startGame()">
+                <span class="btn-icon">▶</span>
+                Play
+            </button>
+            <button class="btn-noir" id="btn-chapters" onclick="openChapters()">
+                <span class="btn-icon">☰</span>
+                Chapters
+            </button>
+        </div>
+
+        <p class="start-footer">Chapter 1 — Now Available</p>
+    </div>
+
+    <!-- ── Chapter Select Overlay ────────────── -->
+    <div class="chapter-overlay" id="chapter-overlay">
+        <div class="chapter-backdrop" onclick="closeChapters()"></div>
+        <div class="chapter-panel">
+            <div class="chapter-header">
+                <h2>Select Chapter</h2>
+                <div class="chapter-header-line"></div>
+            </div>
+
+            <div class="chapter-list" id="chapter-list">
+                <!-- Chapters are injected by JS -->
+            </div>
+
+            <button class="btn-back" onclick="closeChapters()">
+                ← Back
+            </button>
+        </div>
+    </div>
+    <!-- ── Launch Modal (Fresh / Resume) ───────── -->
+    <div class="chapter-overlay" id="launch-overlay">
+        <div class="chapter-backdrop" onclick="closeLaunchModal()"></div>
+        <div class="chapter-panel launch-modal">
+            <div class="chapter-header">
+                <h2 id="launch-modal-title">Chapter 1</h2>
+                <div class="chapter-header-line"></div>
+            </div>
+
+            <p id="launch-modal-subtitle" class="launch-subtitle"></p>
+
+            <div class="launch-actions">
+                <button class="btn-noir btn-play" id="btn-fresh" onclick="freshGame()">
+                    <span class="btn-icon">✦</span>
+                    New Game
+                </button>
+                <button class="btn-noir" id="btn-resume" onclick="resumeGame()">
+                    <span class="btn-icon">▶</span>
+                    Resume
+                </button>
+            </div>
+
+            <button class="btn-back" onclick="closeLaunchModal()">
+                ← Back
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* ── Chapter Data ──────────────────────── */
+        const chapters = [
+            { num: 1, title: "Arriving at the Mansion",         available: true  },
+            { num: 2, title: "Scene of the Crime",              available: false },
+            { num: 3, title: "With Help of the Nanny",          available: false },
+            { num: 4, title: "Let the Chips Fall Where They May", available: false },
+            { num: 5, title: "Confluence",                      available: false },
+            { num: 6, title: "Revelation",                      available: false },
+        ];
+
+        let selectedChapter = null;
+
+        /* ── Check if save data exists ─────────── */
+        function hasSaveData() {
+            return localStorage.getItem('edubytes_gamestate') !== null;
+        }
+
+        /* ── Render chapter list ───────────────── */
+        function renderChapters() {
+            const list = document.getElementById('chapter-list');
+            list.innerHTML = chapters.map(ch => {
+                const cls   = ch.available ? 'available' : 'locked';
+                const status = ch.available
+                    ? '<span class="chapter-status playable">▶ Play Now</span>'
+                    : '<span class="chapter-status coming-soon">Coming Soon</span>';
+                const lock  = ch.available ? '' : '<span class="chapter-lock">🔒</span>';
+                const click = ch.available ? `onclick="selectChapter(${ch.num})"` : '';
+
+                return `
+                    <div class="chapter-item ${cls}" ${click}>
+                        <div class="chapter-num">${ch.num}</div>
+                        <div class="chapter-info">
+                            <div class="chapter-title">Chapter ${ch.num}: ${ch.title}</div>
+                            ${status}
+                        </div>
+                        ${lock}
+                    </div>`;
+            }).join('');
+        }
+
+        /* ── Navigation ────────────────────────── */
+        function startGame() {
+            selectChapter(1);
+        }
+
+        function selectChapter(num) {
+            selectedChapter = num;
+            const ch = chapters.find(c => c.num === num);
+
+            document.getElementById('launch-modal-title').textContent =
+                `Chapter ${ch.num}: ${ch.title}`;
+            document.getElementById('launch-modal-subtitle').textContent =
+                hasSaveData()
+                        ? 'You have existing save data. Resume your progress or start new.'
+                        : 'Begin your investigation from the start.';
+
+            // Show/hide resume button based on save data
+            document.getElementById('btn-resume').style.display =
+                hasSaveData() ? 'flex' : 'none';
+
+            document.getElementById('launch-overlay').classList.add('active');
+        }
+
+        function freshGame() {
+            localStorage.removeItem('edubytes_gamestate');
+            localStorage.removeItem('edubytes_inventory');
+            doLaunch();
+        }
+
+        function resumeGame() {
+            doLaunch();
+        }
+
+        function doLaunch() {
+            closeLaunchModal();
+            closeChapters();
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = 'rooms/outside.html';
+            }, 1000);
+        }
+
+        function openChapters() {
+            document.getElementById('chapter-overlay').classList.add('active');
+        }
+
+        function closeChapters() {
+            document.getElementById('chapter-overlay').classList.remove('active');
+        }
+
+        function closeLaunchModal() {
+            document.getElementById('launch-overlay').classList.remove('active');
+        }
+
+        /* ── Keyboard support ──────────────────── */
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('launch-overlay').classList.contains('active')) {
+                    closeLaunchModal();
+                } else {
+                    closeChapters();
+                }
+            }
+        });
+
+        /* ── Init ──────────────────────────────── */
+        renderChapters();
+    </script>
+</body>
+</html>

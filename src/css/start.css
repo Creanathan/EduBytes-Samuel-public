@@ -1,0 +1,522 @@
+/*
+  Start Screen & Chapter Select
+  Noir Detective Theme - EduBytes: Samuel
+*/
+
+/* ── Reset & Base ────────────────────────────── */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e8dcc8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Background layers ───────────────────────── */
+.start-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: url('../assets/rooms/outside.png') center / cover no-repeat;
+    filter: blur(28px) brightness(0.22) saturate(1.4);
+    transform: scale(1.15);
+    z-index: 0;
+    animation: bg-drift 20s ease-in-out infinite alternate;
+}
+
+@keyframes bg-drift {
+    0%   { transform: scale(1.15) translate(0, 0); }
+    100% { transform: scale(1.20) translate(-8px, -5px); }
+}
+
+/* Grain overlay */
+.start-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+}
+
+/* Noir vignette */
+.vignette {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.75) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ── Main container ──────────────────────────── */
+.start-container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: container-enter 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    opacity: 0;
+}
+
+@keyframes container-enter {
+    0%   { opacity: 0; transform: translateY(30px) scale(0.96); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Title area ──────────────────────────────── */
+.title-group {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.title-label {
+    font-size: 0.85rem;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: rgba(200, 134, 10, 0.7);
+    margin-bottom: 8px;
+    animation: label-flicker 4s ease-in-out infinite;
+}
+
+@keyframes label-flicker {
+    0%, 100% { opacity: 0.7; }
+    50%      { opacity: 1; }
+}
+
+.title-main {
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 12px;
+    color: #fff;
+    text-shadow:
+        0 0 40px rgba(200, 134, 10, 0.35),
+        0 0 80px rgba(200, 134, 10, 0.15),
+        0 2px 4px rgba(0,0,0,0.9);
+    line-height: 1.1;
+}
+
+.title-main span {
+    display: block;
+    font-weight: 700;
+    color: #c8860a;
+    font-size: 0.45em;
+    letter-spacing: 18px;
+    margin-top: 4px;
+    text-shadow: 0 0 30px rgba(200, 134, 10, 0.5);
+}
+
+.title-divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200, 134, 10, 0.6), transparent);
+    margin: 20px auto 0;
+}
+
+/* ── Buttons ─────────────────────────────────── */
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 280px;
+}
+
+.btn-noir {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 32px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #e8dcc8;
+    background: rgba(10, 10, 15, 0.85);
+    border: 1.5px solid rgba(200, 134, 10, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    box-shadow:
+        0 4px 24px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+
+.btn-noir::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(200, 134, 10, 0.08), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.btn-noir:hover {
+    border-color: rgba(200, 134, 10, 0.9);
+    color: #fff;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+        0 8px 32px rgba(0,0,0,0.8),
+        0 0 20px rgba(200, 134, 10, 0.2),
+        inset 0 0 12px rgba(200, 134, 10, 0.1);
+}
+
+.btn-noir:hover::before {
+    opacity: 1;
+}
+
+.btn-noir:active {
+    transform: translateY(0) scale(0.98);
+    transition-duration: 0.1s;
+}
+
+.btn-noir .btn-icon {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-noir:hover .btn-icon {
+    transform: scale(1.2);
+}
+
+/* Play button special styling */
+.btn-play {
+    border-color: rgba(200, 134, 10, 0.5);
+    background: rgba(15, 12, 8, 0.9);
+}
+
+.btn-play::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(200, 134, 10, 0.15), transparent 40%);
+    pointer-events: none;
+}
+
+/* ── Subtitle / footer ───────────────────────── */
+.start-footer {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(200, 134, 10, 0.35);
+}
+
+/* ── Chapter Select Overlay ──────────────────── */
+.chapter-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.chapter-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.chapter-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(16px);
+}
+
+.chapter-panel {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    background: rgba(10, 10, 15, 0.92);
+    border: 1px solid rgba(200, 134, 10, 0.25);
+    border-radius: 8px;
+    padding: 40px 36px;
+    box-shadow:
+        0 24px 80px rgba(0,0,0,0.9),
+        inset 0 1px 0 rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow-y: auto;
+}
+
+.chapter-overlay.active .chapter-panel {
+    transform: translateY(0) scale(1);
+}
+
+/* Panel scrollbar */
+.chapter-panel::-webkit-scrollbar {
+    width: 4px;
+}
+.chapter-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+.chapter-panel::-webkit-scrollbar-thumb {
+    background: rgba(200, 134, 10, 0.3);
+    border-radius: 2px;
+}
+
+.chapter-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.chapter-header h2 {
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #c8860a;
+    margin-bottom: 10px;
+}
+
+.chapter-header-line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200, 134, 10, 0.5), transparent);
+    margin: 0 auto;
+}
+
+/* ── Chapter list ────────────────────────────── */
+.chapter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chapter-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(30, 30, 40, 0.4);
+    border: 1px solid rgba(200, 134, 10, 0.1);
+    border-radius: 6px;
+    transition: all 0.35s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+.chapter-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: rgba(200, 134, 10, 0.2);
+    transition: all 0.35s ease;
+}
+
+/* Available chapter */
+.chapter-item.available {
+    cursor: pointer;
+    border-color: rgba(200, 134, 10, 0.25);
+}
+
+.chapter-item.available::before {
+    background: #c8860a;
+    box-shadow: 0 0 8px rgba(200, 134, 10, 0.4);
+}
+
+.chapter-item.available:hover {
+    background: rgba(40, 35, 25, 0.6);
+    border-color: rgba(200, 134, 10, 0.5);
+    transform: translateX(4px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.chapter-item.available:hover::before {
+    width: 4px;
+    box-shadow: 0 0 14px rgba(200, 134, 10, 0.6);
+}
+
+/* Locked chapter */
+.chapter-item.locked {
+    opacity: 0.4;
+}
+
+.chapter-item.locked::before {
+    background: rgba(100, 100, 100, 0.3);
+}
+
+/* Chapter number badge */
+.chapter-num {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #c8860a;
+    border: 1px solid rgba(200, 134, 10, 0.3);
+    border-radius: 50%;
+    background: rgba(200, 134, 10, 0.06);
+}
+
+.chapter-item.locked .chapter-num {
+    color: rgba(150, 150, 150, 0.5);
+    border-color: rgba(150, 150, 150, 0.2);
+    background: rgba(150, 150, 150, 0.04);
+}
+
+.chapter-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.chapter-title {
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: #e8dcc8;
+    margin-bottom: 3px;
+}
+
+.chapter-item.locked .chapter-title {
+    color: rgba(150, 150, 150, 0.6);
+}
+
+.chapter-status {
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.chapter-status.playable {
+    color: rgba(200, 134, 10, 0.8);
+}
+
+.chapter-status.coming-soon {
+    color: rgba(150, 150, 150, 0.45);
+}
+
+/* Lock icon */
+.chapter-lock {
+    flex-shrink: 0;
+    font-size: 0.9rem;
+    opacity: 0.3;
+}
+
+/* ── Back button ─────────────────────────────── */
+.btn-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 28px auto 0;
+    padding: 10px 28px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(232, 220, 200, 0.5);
+    background: transparent;
+    border: 1px solid rgba(200, 134, 10, 0.15);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    color: #e8dcc8;
+    border-color: rgba(200, 134, 10, 0.5);
+    background: rgba(200, 134, 10, 0.06);
+}
+
+/* ── Launch Modal ────────────────────────────── */
+.launch-modal {
+    max-width: 420px;
+    text-align: center;
+}
+
+.launch-subtitle {
+    font-size: 0.8rem;
+    color: rgba(232, 220, 200, 0.5);
+    line-height: 1.6;
+    margin-bottom: 28px;
+    letter-spacing: 0.5px;
+}
+
+.launch-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.launch-actions .btn-noir {
+    width: 100%;
+}
+
+/* ── Fade-out transition ─────────────────────── */
+.fade-out {
+    animation: screen-fade-out 1.2s ease-in forwards;
+}
+
+@keyframes screen-fade-out {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 480px) {
+    .title-main {
+        letter-spacing: 6px;
+    }
+    .title-main span {
+        letter-spacing: 10px;
+    }
+    .btn-group {
+        width: 240px;
+    }
+    .btn-noir {
+        padding: 14px 24px;
+        font-size: 0.85rem;
+        letter-spacing: 3px;
+    }
+    .chapter-panel {
+        padding: 28px 20px;
+    }
+    .chapter-item {
+        padding: 12px 14px;
+        gap: 12px;
+    }
+    .chapter-num {
+        width: 30px;
+        height: 30px;
+        font-size: 0.7rem;
+    }
+}
