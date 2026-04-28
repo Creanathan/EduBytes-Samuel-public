@@ -170,29 +170,48 @@ The column headers **Log_ID**, **Subject**, and **Observation** start pulsing/gl
 ### Stage 9 — Success! (Normalization Complete)
 
 **What happens**:
-- A green **"Normalization Success"** banner appears at the bottom.
+- A green **"Database Normalized"** banner appears.
 - The table glows green.
-- The **Subject column is decrypted** — `[REDACTED]` is replaced with real names.
-- Row #005's hidden clue is revealed.
+- **Subject column is decrypted** — `[REDACTED]` is replaced with real names.
+- The **Tab Bar** appears at the top: `DATABASE`, `CROSS-REFERENCE`, and `FILE ACCUSATION`.
+- A **Case File: Suspect Profiles** section appears below the table, grouping the decrypted observations cleanly by suspect.
 
-**The revealed database looks like this:**
+> **Note**: The puzzle is solved, but the investigation isn't over. You now have clean, atomic data. It's time to use it to find the killer.
 
-| Log_ID | Subject | Observation |
-|--------|---------|-------------|
-| #001 | Leduc (Butler) | Hallway. Claims he was prepping tea. |
-| #001 | Leduc (Butler) | Kitchen. Claims he was prepping tea. |
-| #001 | Leduc (Butler) | Dining Room. Claims he was prepping tea. |
-| #002 | Beatrix (Nanny) | Nursery. Claims she was washing the cradle linens. |
-| #002 | Beatrix (Nanny) | Laundry. Claims she was washing the cradle linens. |
-| #003 | Thomas (Partner) | Living Room. Claims he was playing piano to calm his nerves. |
-| #004 | Off. Miller | Crime Scene. Found the body at 22:00. |
-| #005 | System Registry | **Piano (UNSUCCESSFUL: Butler hid the key?)** |
-
-> **The critical clue**: Entry #005 decrypts to reveal *"Piano (UNSUCCESSFUL: Butler hid the key?)"*. This tells you that the **Butler (Leduc)** hid something in the Piano. Go investigate the Piano in the Living Room.
-
-**Action**: Click **"Close Tablet"** and head to the Living Room → interact with the Piano.
+**Action**: Click the **CROSS-REFERENCE** tab at the top.
 
 ---
+
+### Stage 10 — Cross-Reference Analysis
+
+**What you see**: A forensic query tool that lets you filter the newly normalized database by suspect and keyword.
+
+**The Goal**: Find contradictions in the suspects' alibis.
+
+**How to do it**:
+1. Select **Leduc (Butler)** from the suspect dropdown.
+2. The results show his alibi: he was in the Hallway, Kitchen, and Dining Room. He never mentions the Piano.
+3. In the keyword box, type `Piano` and hit **ANALYZE**.
+4. The results show a **System Registry** entry: *"Piano (UNSUCCESSFUL: Butler hid the key?)"*.
+5. A **⚠ CONTRADICTION DETECTED** alert appears, explaining that Butler's alibi conflicts with the system log.
+
+> **Why this matters**: This proves the power of database normalization. Before you fixed the commas, searching for "Piano" would have been inaccurate or impossible. Now, every query is precise.
+
+**Action**: Once you've run at least one query and found the contradiction, click the **FILE ACCUSATION** tab.
+
+---
+
+### Stage 11 — Filing the Accusation
+
+**What you see**: An investigation summary showing which suspects have clean alibis and which have contradictions. 
+
+**How to do it**:
+1. Review the summary: Leduc (Butler) is flagged with a red `!` for a contradiction.
+2. Click the **Leduc (Butler)** button to select him as the primary suspect.
+3. Click the red **⚖ SUBMIT ACCUSATION** button.
+4. A green **"✓ ACCUSATION FILED"** confirmation appears. The system formally logs your findings.
+
+**Action**: Click **"Close Tablet & Confront Suspect"** and head to the Living Room to investigate the Piano.
 
 ## Hints for Stuck Players
 
@@ -216,6 +235,12 @@ The column headers **Log_ID**, **Subject**, and **Observation** start pulsing/gl
 
 ### "The Subject column still shows [REDACTED] after I selected both keys"
 → Make sure you selected **exactly 2 keys**: `Log_ID` and `Observation`. Deselect any others by clicking them again. The selection must be precisely those two — no more, no less.
+
+### "I can't open the FILE ACCUSATION tab"
+→ The accusation panel is locked until you actually use the database you just fixed. Go to the **CROSS-REFERENCE** tab and run at least one query (e.g., search for "Piano") to unlock it.
+
+### "I filed an accusation against the wrong person"
+→ The system logs all accusations, but if you select the wrong suspect, it will tell you the forensic data doesn't support your conclusion. You cannot change your accusation once filed, but you can still close the tablet and investigate the Piano.
 
 ---
 
@@ -245,3 +270,5 @@ The column headers **Log_ID**, **Subject**, and **Observation** start pulsing/gl
 | **Atomic data = searchable** | After splitting, searching "Hallway" finds exactly one row |
 | **Composite Primary Key** | Log_ID alone repeats after splitting; Log_ID + Observation uniquely identifies each row |
 | **Reward for normalization** | Hidden identities [REDACTED] are decrypted only after 1NF compliance |
+| **Power of precise queries** | The Cross-Reference tool only works properly *because* the data is atomic |
+| **Data integrity** | Finding contradictions between alibis and system logs using filtered queries |

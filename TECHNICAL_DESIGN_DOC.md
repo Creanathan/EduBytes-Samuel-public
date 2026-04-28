@@ -123,6 +123,8 @@ The `REIMPORT` button allows a player to reset their editing attempts **without 
 | `Detective_os_imported` | `'true'` / absent | Whether the USB has been decrypted and loaded. |
 | `Detective_os_data` | JSON string | The current state of the editable database. |
 | `Detective_os_unlocked` | `'true'` / absent | Whether the 1NF puzzle has been solved. |
+| `Detective_os_queries` | Number string | Tracks how many cross-reference queries the user has run (unlocks Accusation tab). |
+| `Detective_os_accusation` | String | The name of the primary suspect accused by the player. |
 
 ### 5.7 1NF Puzzle Steps
 
@@ -138,3 +140,32 @@ The `REIMPORT` button allows a player to reset their editing attempts **without 
 | `Enter` key | Save edit (triggers `editCell()` via blur) |
 | `Escape` key | Revert to original value (stored in `originalCellValue`) |
 | `[DEL]` button | Remove the entire row |
+
+### 5.9 Phase 2: Post-Normalization (Tabbed Interface)
+
+Once normalization is achieved (`isUnlocked = true`), the tablet reveals a 3-tab navigation system, transitioning from a repair utility to an analytical forensic tool.
+
+**1. DATABASE Tab**: 
+- The existing interface. 
+- Becomes read-only (editing disabled).
+- Displays the **Decrypted Case File** panel (Suspect Profile Cards).
+
+**2. CROSS-REFERENCE Tab**:
+- Educational purpose: Demonstrates the power of normalized, atomic data by enabling precise SQL-like filtering.
+- Inputs: Suspect dropdown & Free-text keyword location.
+- **Contradiction Engine**: If the query involves `Piano` and returns the `System Registry` entry, AND the user queries `Butler` showing he lacks a Piano alibi, the system displays a narrative `⚠ CONTRADICTION DETECTED` alert.
+
+**3. FILE ACCUSATION Tab**:
+- Narrative purpose: Gives the technical work a real-world consequence.
+- Gated behind: The user must run at least one query in the Cross-Reference tab (`Detective_os_queries > 0`).
+- Generates an auto-summary of suspect alibis, highlighting contradictions.
+- Allows the user to select a suspect and submit an accusation.
+- Posts a `message` to the parent window: `{ type: 'accusation_filed', suspect: 'Leduc (Butler)', correct: true }`.
+
+### 5.10 VALIDATE Feedback Engine
+
+A persistent **✓ VALIDATE** button exists in the database toolbar to provide real-time status checks:
+- **Step 1 (Atomicity)**: Returns a bulleted list of all rows that still contain commas.
+- **Step 1 Passed**: Confirms atomicity and instructs the user to select headers for the composite key.
+- **Step 2 (Keys)**: Displays currently selected headers and alerts if the composite key is incomplete.
+- **Fully Validated**: Confirms full 1NF compliance and directs the user to the analytical tabs.
