@@ -3,14 +3,14 @@
  * Developer: Detective Louis Dekoning (In-Lore)
  */
 
-// Initial "Dirty" database (Mangled state)
+// Initial "Dirty" database (Narrative Witness Reports)
 const DEFAULT_DATA = [
-    { log_id: "#001", officer: "Off. Miller", searched_rooms: "Kitchen, Pantry" },
-    { log_id: "#002", officer: "Det. Louis", searched_rooms: "Nursery, Living Room, Hallway, Office" },
-    { log_id: "#003", officer: "Off. Hayes", searched_rooms: "Study, Master Bedroom" },
-    { log_id: "#004", officer: "Sgt. Cross", searched_rooms: "Bathroom" },
+    { log_id: "#001", subject: "Leduc (Butler)", observation: "Hallway, Kitchen, Dining Room. Claims he was prepping tea." },
+    { log_id: "#002", subject: "Beatrix (Nanny)", observation: "Nursery, Laundry. Claims she was washing the cradle linens." },
+    { log_id: "#003", subject: "Thomas (Partner)", observation: "Living Room. Claims he was playing piano to calm his nerves." },
+    { log_id: "#004", subject: "Off. Miller", observation: "Crime Scene. Found the body at 22:00." },
     // [AI - ANTIGRAVITY] - Mangled narrative clue hidden by 1NF violations
-    { log_id: "#005", officer: "Off. Miller", searched_rooms: "Piano (ERR_DATA_BLOCK_772: HIDDEN_RESTRICTED)" }
+    { log_id: "#005", subject: "System Registry", observation: "Piano (ERR_DATA_BLOCK_772: HIDDEN_RESTRICTED)" }
 ];
 
 let currentStep = 1; // 1: Atomicity, 2: Primary Key
@@ -179,8 +179,8 @@ function addRow() {
     if (isUnlocked) return;
     const newRow = {
         log_id: "#NEW",
-        officer: "Det. User",
-        searched_rooms: "Empty"
+        subject: "Witness Name",
+        observation: "Empty"
     };
     DetectiveData.push(newRow);
     localStorage.setItem('Detective_os_data', JSON.stringify(DetectiveData));
@@ -235,19 +235,19 @@ function renderTable() {
     DetectiveData.forEach((row, index) => {
         const tr = document.createElement("tr");
 
-        let displayRooms = row.searched_rooms;
+        let displayObs = row.observation;
         // Logic to reveal the 'Butler' clue only after normalization is fixed
-        if (displayRooms.includes("ERR_DATA_BLOCK_772") && isUnlocked) {
-            displayRooms = "Piano (UNSUCCESSFUL: Butler hid the key?)";
+        if (displayObs.includes("ERR_DATA_BLOCK_772") && isUnlocked) {
+            displayObs = "Piano (UNSUCCESSFUL: Butler hid the key?)";
         }
 
         const isEditable = !isUnlocked;
-        const roomsClass = (displayRooms.includes(",") && currentStep === 1) ? "corrupt-cell" : "";
+        const obsClass = (displayObs.includes(",") && currentStep === 1) ? "corrupt-cell" : "";
 
         tr.innerHTML = `
             <td contenteditable="${isEditable}" onkeydown="handleKey(event, ${index}, 'log_id')" onblur="editCell(${index}, 'log_id', this.innerText)">${row.log_id}</td>
-            <td contenteditable="${isEditable}" onkeydown="handleKey(event, ${index}, 'officer')" onblur="editCell(${index}, 'officer', this.innerText)">${row.officer}</td>
-            <td contenteditable="${isEditable}" class="${roomsClass}" onkeydown="handleKey(event, ${index}, 'searched_rooms')" onblur="editCell(${index}, 'searched_rooms', this.innerText)">${displayRooms}</td>
+            <td contenteditable="${isEditable}" onkeydown="handleKey(event, ${index}, 'subject')" onblur="editCell(${index}, 'subject', this.innerText)">${row.subject}</td>
+            <td contenteditable="${isEditable}" class="${obsClass}" onkeydown="handleKey(event, ${index}, 'observation')" onblur="editCell(${index}, 'observation', this.innerText)">${displayObs}</td>
             ${!isUnlocked ? `<td><button onclick="deleteRow(${index})" style="background:none; border:none; color:var(--accent-red); cursor:pointer; font-size:10px;">[DEL]</button></td>` : ''}
         `;
         tbody.appendChild(tr);
@@ -271,16 +271,16 @@ function splitData(index) {
     if (currentStep !== 1 || isUnlocked) return;
 
     const corruptRow = DetectiveData[index];
-    if (!corruptRow.searched_rooms.includes(",")) return;
+    if (!corruptRow.observation.includes(",")) return;
 
-    const roomsArray = corruptRow.searched_rooms.split(",").map(room => room.trim());
+    const obsArray = corruptRow.observation.split(",").map(obs => obs.trim());
 
     DetectiveData.splice(index, 1);
-    const newRows = roomsArray.map(room => {
+    const newRows = obsArray.map(obs => {
         return {
             log_id: corruptRow.log_id,
-            officer: corruptRow.officer,
-            searched_rooms: room
+            subject: corruptRow.subject,
+            observation: obs
         };
     });
 
@@ -293,15 +293,15 @@ function checkStepCondition() {
     if (isUnlocked) return;
 
     if (currentStep === 1) {
-        const isCorrupted = DetectiveData.some(row => row.searched_rooms.includes(","));
+        const isCorrupted = DetectiveData.some(row => row.observation.includes(","));
         if (!isCorrupted) {
             currentStep = 2;
             updateStepUI();
             renderTable();
         }
     } else if (currentStep === 2) {
-        // Win condition: Log_ID and Searched_Rooms selected as composite key
-        if (selectedKeys.has("log_id") && selectedKeys.has("searched_rooms") && selectedKeys.size === 2) {
+        // Win condition: Log_ID and Observation selected as composite key
+        if (selectedKeys.has("log_id") && selectedKeys.has("observation") && selectedKeys.size === 2) {
             triggerSuccessState();
         }
     }
