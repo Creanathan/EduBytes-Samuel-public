@@ -231,23 +231,26 @@
 
 /* ── Final fade to black ────────────────────── */
 #cutscene-overlay.fade-to-black {
-    animation: cutscene-blackout 1.5s ease-in forwards;
-}
-
-@keyframes cutscene-blackout {
-    0%   { background: transparent; }
-    100% { background: #000; }
+    background: #000;
 }
 
 /* Hide slides during final fade */
 #cutscene-overlay.fade-to-black .cutscene-slide {
     opacity: 0 !important;
-    transition: opacity 1.2s ease;
+    transition: opacity 1s ease;
 }
 
-#cutscene-overlay.fade-to-black .cutscene-narration {
-    opacity: 0;
-    transition: opacity 1s ease;
+#cutscene-overlay.fade-to-black .cutscene-narration,
+#cutscene-overlay.fade-to-black .cutscene-skip,
+#cutscene-overlay.fade-to-black .cutscene-continue {
+    opacity: 0 !important;
+    transition: opacity 0.6s ease;
+}
+
+/* Hide letterbox bars */
+#cutscene-overlay.fade-to-black .cutscene-letterbox-top,
+#cutscene-overlay.fade-to-black .cutscene-letterbox-bottom {
+    height: 0;
 }
 
 /* ── Responsive ─────────────────────────────── */
