@@ -142,13 +142,15 @@ const DIALOGS = {
         // ── Beatrix Lémur — 3 conditional states ──
         beatrix: [
             {
-                // [AI - ANTIGRAVITY] - NEW STATE: Confrontation about the key revealed by tablet
-                condition: "GameState.hasFlag('database_normalized') && !GameState.hasFlag('has_nannys_key')",
+                // [AI - ANTIGRAVITY] - NEW STATE: Confrontation about the alibi contradiction
+                condition: "GameState.hasFlag('accusation_filed_beatrix') && !GameState.hasFlag('has_nannys_key')",
                 speaker: "Beatrix Lémur",
                 lines: [
-                    "The police logs? I... I see. You've cleaned up their mess.",
-                    "Yes, I have the key to my room. I took it from the nursery after the triplets were moved. I didn't want the police rummaging through my personal belongings.",
-                    "Since you seem more... orderly... than those officers, I suppose you should have it. Just... be respectful."
+                    "The police logs? You've... corrected them? How very thorough of you, detective.",
+                    "My alibi? I already told you, I was in the Nursery and Laundry all night. Log #002 is quite clear on that.",
+                    "Wait... Log #005? A sensor identified me at the Piano? That's... impossible. There must be a glitch in your machine.",
+                    "Fine. I was there. I took the key because I didn't trust the police to 'find' it properly. They would only use it to harass me.",
+                    "If you want to search my room so badly, here it is. But you won't find anything but the loyalty of a lifelong servant."
                 ],
                 options: [
                     { label: "Take Key", action: "setFlag:has_nannys_key|addItem:nannys_key|exit" }
@@ -273,9 +275,9 @@ const DIALOGS = {
                 condition: "GameState.hasFlag('database_normalized')",
                 speaker: "Det. Louis Dekoning",
                 lines: [
-                    "The search logs show that Beatrix (the Nanny) was seen here shortly after the police arrived.",
-                    "She seems to have 'seized' an item for safekeeping... likely the key to her room.",
-                    "I should go to the Nursery and ask her about it."
+                    "The search logs show a direct contradiction. Beatrix (the Nanny) was seen here shortly after the incident.",
+                    "Her official alibi in Log #002 says she was in the Nursery, but Log #005 places her right here at the Piano.",
+                    "I should go to the Nursery and confront her with this evidence."
                 ],
                 options: [{ label: "Close", action: "exit" }]
             },

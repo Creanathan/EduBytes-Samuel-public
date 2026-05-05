@@ -91,6 +91,17 @@ const Inventory = (function() {
          */
         getItems: function() {
             return [...items];
+        },
+
+        /**
+         * Clears all inventory data.
+         */
+        reset: function() {
+            items = [];
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_KEY + '_sig');
+            // Dispatch event for UI updates
+            window.dispatchEvent(new CustomEvent('inventoryUpdate', { detail: { items } }));
         }
     };
 })();

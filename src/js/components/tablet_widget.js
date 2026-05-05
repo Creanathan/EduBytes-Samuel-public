@@ -266,6 +266,11 @@
                 if (window.GameState) {
                     window.GameState.setFlag('database_normalized');
                 }
+            } else if (event.data.type === 'accusation_filed') {
+                console.log("[Narrative] Accusation filed against: " + event.data.suspect);
+                if (window.GameState && event.data.correct) {
+                    window.GameState.setFlag('accusation_filed_beatrix');
+                }
             }
         });
 
@@ -281,7 +286,7 @@
         // Only blink if we have data to fix (ledger) but haven't fixed it yet.
         const hasLedger = window.Inventory && window.Inventory.hasItem('police_ledger');
         const hasUSB = window.Inventory && window.Inventory.hasItem('usb_stick');
-        const isUnlocked = localStorage.getItem('police_os_unlocked') === 'true';
+        const isUnlocked = localStorage.getItem('Detective_os_unlocked') === 'true';
 
         if ((hasLedger || hasUSB) && !isUnlocked) {
             dot.classList.add('active');

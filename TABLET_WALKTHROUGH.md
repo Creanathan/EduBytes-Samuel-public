@@ -189,11 +189,11 @@ The column headers **Log_ID**, **Subject**, and **Observation** start pulsing/gl
 **The Goal**: Find contradictions in the suspects' alibis.
 
 **How to do it**:
-1. Select **Leduc (Butler)** from the suspect dropdown.
-2. The results show his alibi: he was in the Hallway, Kitchen, and Dining Room. He never mentions the Piano.
+1. Select **Beatrix (Nanny)** from the suspect dropdown.
+2. The results show her alibi (`Log #002`): she was in the Nursery and Laundry. 
 3. In the keyword box, type `Piano` and hit **ANALYZE**.
-4. The results show a **System Registry** entry: *"Piano (UNSUCCESSFUL: Butler hid the key?)"*.
-5. A **⚠ CONTRADICTION DETECTED** alert appears, explaining that Butler's alibi conflicts with the system log.
+4. The results show **Log #005**: *"Silver Key missing from Piano. Subject B. Lemur identified nearby."*
+5. A **⚠ CONTRADICTION DETECTED** alert appears: "Subject alibi (#002) conflicts with physical evidence (#005)."
 
 > **Why this matters**: This proves the power of database normalization. Before you fixed the commas, searching for "Piano" would have been inaccurate or impossible. Now, every query is precise.
 
@@ -206,8 +206,8 @@ The column headers **Log_ID**, **Subject**, and **Observation** start pulsing/gl
 **What you see**: An investigation summary showing which suspects have clean alibis and which have contradictions. 
 
 **How to do it**:
-1. Review the summary: Leduc (Butler) is flagged with a red `!` for a contradiction.
-2. Click the **Leduc (Butler)** button to select him as the primary suspect.
+1. Review the summary: Beatrix (Nanny) is flagged with a red `!` for a contradiction.
+2. Click the **Beatrix (Nanny)** button to select her as the primary suspect.
 3. Click the red **⚖ SUBMIT ACCUSATION** button.
 4. A green **"✓ ACCUSATION FILED"** confirmation appears. The system formally logs your findings.
 

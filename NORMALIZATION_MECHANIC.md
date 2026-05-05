@@ -25,10 +25,10 @@ The mechanic is integrated into the story through a logical character-driven loo
     *   **Phase 2**: Assign Composite Primary Key (Log ID + Searched Room).
 4.  **The Benefit (Search Engine)**:
     The player can now use the **Search Bar**. Searching for "Piano" (which failed before normalization) now reveals:
-    > **Log #005**: *"Key seized by Nanny (B. Lemur) from Living Room Piano."*
+    > **Log #005**: *"Silver Key detected missing from Living Room Piano. Subject B. Lemur (Nanny) identified nearby."*
     *   *Mechanism: Sets flag `database_normalized`.*
 5.  **The Confrontation (Nursery)**:
-    The detective now has the information to ask **Beatrix (The Nanny)** about the key. She admits to taking it and gives it to the player.
+    The detective now has the information to ask **Beatrix (The Nanny)** about her location. He points out that while she claimed to be in the Nursery (`Log #002`), the forensic log (`Log #005`) places her at the Piano. She admits to "securing" the key and hands it over.
     *   *Mechanism: Sets flag `has_nannys_key`.*
 
 ## 4. Technical Details

@@ -72,6 +72,16 @@
             this.#flags = {};
             localStorage.removeItem(STORAGE_KEY);
             localStorage.removeItem(STORAGE_KEY + '_sig');
+            
+            // Clear Detective OS (Tablet) State
+            localStorage.removeItem('Detective_os_data');
+            localStorage.removeItem('Detective_os_unlocked');
+            localStorage.removeItem('Detective_os_imported');
+            localStorage.removeItem('Detective_os_queries');
+            localStorage.removeItem('Detective_os_accusation');
+            
+            // Clear Room State
+            localStorage.removeItem('edubytes_last_room');
         }
     }
 

@@ -9,7 +9,7 @@ const DEFAULT_DATA = [
     { log_id: "#002", subject: "Beatrix (Nanny)", observation: "Nursery, Laundry. Claims she was washing the cradle linens." },
     { log_id: "#003", subject: "Thomas (Partner)", observation: "Living Room. Claims he was playing piano to calm his nerves." },
     { log_id: "#004", subject: "Off. Miller", observation: "Crime Scene. Found the body at 22:00." },
-    // [AI - ANTIGRAVITY] - Mangled narrative clue hidden by 1NF violations
+    // [AI - ANTIGRAVITY] - Alibi contradiction hidden by 1NF violations
     { log_id: "#005", subject: "System Registry", observation: "Piano (ERR_DATA_BLOCK_772: HIDDEN_RESTRICTED)" }
 ];
 
@@ -113,7 +113,7 @@ function checkSetup() {
     reimportBtn.style.display = "none";
 
     // Robust item check (Parent -> LocalStorage fallback)
-    const hasLedger = checkInventoryLocal('ledger');
+    const hasLedger = checkInventoryLocal('police_ledger');
     const hasUSB = checkInventoryLocal('usb_stick');
 
     if (hasUSB) {
@@ -294,8 +294,7 @@ function runCrossRef() {
         matches.forEach(row => {
             const tr = document.createElement('tr');
             let obs = row.observation;
-            if (obs.includes('ERR_DATA_BLOCK_772')) obs = 'Piano (UNSUCCESSFUL: Butler hid the key?)';
-            const isCritical = obs.includes('Butler hid') || obs.includes('UNSUCCESSFUL');
+            const isCritical = obs.includes('B. Lemur') || obs.includes('Silver Key') || obs.includes('ERR_DATA_BLOCK');
             tr.innerHTML = `
                 <td>${row.log_id}</td>
                 <td style="color:var(--accent-amber)">${row.subject}</td>
@@ -319,18 +318,18 @@ function runCrossRef() {
 }
 
 function detectContradictions(suspectFilter, keywordFilter, matches) {
-    const isButlerQuery  = suspectFilter.includes('leduc') || suspectFilter.includes('butler');
+    const isNannyQuery   = suspectFilter.includes('beatrix') || suspectFilter.includes('lemur') || suspectFilter.includes('nanny');
     const isPianoQuery   = keywordFilter.includes('piano');
-    const hasSystemEntry = matches.some(r => r.observation.toLowerCase().includes('unsuccessful') || r.observation.includes('ERR_DATA_BLOCK'));
+    const hasNannyPianoEntry = matches.some(r => r.observation.includes('B. Lemur'));
 
-    if (isPianoQuery && hasSystemEntry) {
-        return `<b>⚠ CONTRADICTION DETECTED:</b> The System Registry records a Piano access attempt that was marked UNSUCCESSFUL. Thomas (Partner) claims he was playing the Piano. Either the Piano was accessed before or after Thomas was there — or one alibi is false.<br><br>Cross-reference Butler's locations: he never mentions the Piano, yet the System Registry entry suggests someone tried to access it.`;
+    if (isPianoQuery && hasNannyPianoEntry) {
+        return `<b>⚠ CONTRADICTION DETECTED:</b> The System Registry (Log #005) identifies Beatrix Lémur at the Piano. However, her official statement (Log #002) claims she was in the Nursery and Laundry all night. This proves she lied about her whereabouts.`;
     }
-    if (isButlerQuery) {
-        const butlerObs = matches.map(r => r.observation.toLowerCase());
-        const mentionsPiano = butlerObs.some(o => o.includes('piano'));
+    if (isNannyQuery) {
+        const nannyObs = matches.map(r => r.observation.toLowerCase());
+        const mentionsPiano = nannyObs.some(o => o.includes('piano'));
         if (!mentionsPiano) {
-            return `<b>⚠ NOTE:</b> Leduc (Butler) claims he was in the Hallway, Kitchen, and Dining Room. His alibi does NOT include the Piano — yet the System Registry (Log #005) records a Piano access attempt. Run a Piano query to investigate.`;
+            return `<b>⚠ NOTE:</b> Beatrix Lémur claims she was only in the Nursery and Laundry. Run a 'Piano' query to see if there are any records of her elsewhere in the mansion.`;
         }
     }
     return null;
@@ -356,9 +355,9 @@ function buildAccusationPanel() {
 
     // Build investigation summary (who has contradictions)
     const suspects = [
-        { name: 'Leduc (Butler)',   key: 'leduc',   contradiction: true,  reason: '1 contradiction — Piano access attempt conflicts with alibi' },
-        { name: 'Beatrix (Nanny)', key: 'beatrix',  contradiction: false, reason: 'Alibi consistent with recovered records' },
-        { name: 'Thomas (Partner)',key: 'thomas',   contradiction: false, reason: 'Present at Piano — but as victim or witness?' },
+        { name: 'Beatrix (Nanny)', key: 'beatrix',  contradiction: true,  reason: '1 contradiction — Alibi (#002) conflicts with physical evidence (#005)' },
+        { name: 'Leduc (Butler)',   key: 'leduc',   contradiction: false, reason: 'Alibi consistent with recovered tea preparation logs' },
+        { name: 'Thomas (Partner)',key: 'thomas',   contradiction: false, reason: 'Present at Piano — stated consistently in all reports' },
         { name: 'Off. Miller',     key: 'miller',   contradiction: false, reason: 'First responder — found body at 22:00' },
     ];
 
@@ -406,7 +405,7 @@ function submitAccusation() {
 
     localStorage.setItem('Detective_os_accusation', selectedSuspect);
 
-    const isCorrect = selectedSuspect.includes('Butler') || selectedSuspect.includes('Leduc');
+    const isCorrect = selectedSuspect.includes('Beatrix') || selectedSuspect.includes('Nanny') || selectedSuspect.includes('Lémur');
 
     // Post to parent game
     try {
@@ -428,7 +427,7 @@ function submitAccusation() {
         confirmDiv.innerHTML = `
             <div class="accusation-title">✓ ACCUSATION FILED</div>
             <div>Primary suspect: <b>${selectedSuspect}</b></div>
-            <div style="margin-top:8px;">The System Registry data confirms a Piano access attempt inconsistent with the Butler's stated alibi. A formal investigation report has been submitted. Return to the investigation and confront Leduc.</div>
+            <div style="margin-top:8px;">The System Registry data confirms a Piano access attempt inconsistent with the Nanny's stated alibi. A formal investigation report has been submitted. Return to the investigation and confront Beatrix.</div>
             <button class="btn-continue" style="margin-top:14px;" onclick="closeTablet()">Close Tablet &amp; Confront Suspect</button>
         `;
     } else {
@@ -570,9 +569,9 @@ function renderTable() {
         let displayObs = row.observation;
         let displaySubject = row.subject;
 
-        // Logic to reveal the 'Butler' clue only after normalization is fixed
+        // Logic to reveal the 'Beatrix' clue only after normalization is fixed
         if (displayObs.includes("ERR_DATA_BLOCK_772") && isUnlocked) {
-            displayObs = "Piano (UNSUCCESSFUL: Butler hid the key?)";
+            displayObs = "Piano. Silver Key missing. Subject B. Lemur identified nearby.";
         }
 
         // REWARD MECHANIC: Hide the Subject until unlocked
@@ -747,7 +746,7 @@ function showSuccessUI() {
     if (table) {
         table.classList.add("success-glow");
         table.querySelectorAll("tbody tr").forEach(row => {
-            if (row.innerText.includes("Butler hid the key?")) {
+            if (row.innerText.includes("B. Lemur") || row.innerText.includes("Silver Key")) {
                 row.style.background = "rgba(200, 134, 10, 0.25)";
                 row.style.border = "1px solid #c8860a";
                 row.style.boxShadow = "inset 0 0 15px rgba(200, 134, 10, 0.1)";

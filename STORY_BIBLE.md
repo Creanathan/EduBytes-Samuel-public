@@ -81,4 +81,4 @@ This document standardizes the narrative, characters, and investigative mechanic
 ### Educational Mechanic (1NF)
 *   **Problem**: Multiple entries (rooms) in single database cells.
 *   **Action**: Player must split cells to achieve **Atomicity**.
-*   **Payoff**: Reveals Log #005 (The Nanny Key clue).
+*   **Payoff**: Reveals a contradiction in the Nanny's alibi. Log #002 says she was in the Nursery; Log #005 places her at the Piano.
