@@ -37,6 +37,7 @@ const CutsceneEngine = (() => {
     let typingInterval = null;
     let isPlaying = false;
     let navigateUrl = './src/rooms/outside.html';
+    let audioCtx = null;
 
     /* ── Click / key-advance resolver ─────────── */
     let advanceResolve = null;        // resolved when user clicks to continue
@@ -166,7 +167,14 @@ const CutsceneEngine = (() => {
         clearInterval(typingInterval);
         typingInterval = setInterval(() => {
             if (charIndex < text.length) {
-                textSpan.textContent += text[charIndex];
+                const char = text[charIndex];
+                textSpan.textContent += char;
+                
+                // Play typewriter sound for non-space characters
+                if (char.trim() !== '' && audioCtx) {
+                    playTypewriterClick();
+                }
+                
                 charIndex++;
             } else {
                 clearInterval(typingInterval);
@@ -189,6 +197,50 @@ const CutsceneEngine = (() => {
             showContinuePrompt();
             advanceResolve = resolve;
         });
+    }
+
+    /* ── Audio ────────────────────────────────── */
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playTypewriterClick() {
+        if (!audioCtx) return;
+        const t = audioCtx.currentTime;
+        
+        // Multiple oscillators to create a mechanical click sound
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        osc1.type = 'square';
+        osc2.type = 'triangle';
+        
+        // Randomize pitch slightly
+        const baseFreq = 500 + Math.random() * 300;
+        osc1.frequency.setValueAtTime(baseFreq, t);
+        osc2.frequency.setValueAtTime(baseFreq * 1.5, t);
+        
+        const g = audioCtx.createGain();
+        g.gain.setValueAtTime(0.04, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+        
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 1800;
+        
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(g);
+        g.connect(audioCtx.destination);
+        
+        osc1.start(t);
+        osc2.start(t);
+        osc1.stop(t + 0.04);
+        osc2.stop(t + 0.04);
     }
 
     /* ── Play a single slide ──────────────────── */
@@ -227,6 +279,8 @@ const CutsceneEngine = (() => {
         if (isPlaying) return;
         isPlaying = true;
         navigateUrl = url || navigateUrl;
+        
+        initAudio();
 
         buildOverlay();
 
