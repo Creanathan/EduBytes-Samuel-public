@@ -1,0 +1,270 @@
+/*
+  Cutscene Cinematic System
+  Noir Detective Theme – EduBytes
+*/
+
+/* ── Cutscene Container ─────────────────────── */
+#cutscene-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease;
+}
+
+#cutscene-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ── Letterbox Bars (cinematic widescreen) ──── */
+.cutscene-letterbox-top,
+.cutscene-letterbox-bottom {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 10vh;
+    background: #000;
+    z-index: 20;
+    transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cutscene-letterbox-top { top: 0; }
+.cutscene-letterbox-bottom { bottom: 0; }
+
+/* ── Image Slides ───────────────────────────── */
+.cutscene-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.4s ease-in-out;
+    overflow: hidden;
+}
+
+.cutscene-slide.active {
+    opacity: 1;
+}
+
+.cutscene-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    will-change: transform;
+}
+
+/* Ken Burns animations – each slide gets its own */
+.cutscene-slide.kb-zoom-in img {
+    animation: kb-zoom-in 8s ease-in-out forwards;
+}
+
+.cutscene-slide.kb-pan-left img {
+    animation: kb-pan-left 8s ease-in-out forwards;
+}
+
+@keyframes kb-zoom-in {
+    0%   { transform: scale(1.0); }
+    100% { transform: scale(1.15); }
+}
+
+@keyframes kb-pan-left {
+    0%   { transform: scale(1.12) translate(3%, 0); }
+    100% { transform: scale(1.18) translate(-2%, -1%); }
+}
+
+/* ── Noir grain overlay on slides ───────────── */
+.cutscene-slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.04) 3px,
+        rgba(0, 0, 0, 0.04) 6px
+    );
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: multiply;
+}
+
+/* ── Vignette overlay on slides ─────────────── */
+.cutscene-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.7) 100%);
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* ── Rain overlay ───────────────────────────── */
+.cutscene-rain {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0.12;
+    background:
+        linear-gradient(transparent 0%, rgba(180, 200, 220, 0.15) 50%, transparent 100%);
+    background-size: 1px 80px;
+    animation: rain-fall 0.4s linear infinite;
+}
+
+@keyframes rain-fall {
+    0%   { background-position: 0 0; }
+    100% { background-position: 0 80px; }
+}
+
+/* ── Narration Text ─────────────────────────── */
+.cutscene-narration {
+    position: absolute;
+    bottom: 14vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    width: 85%;
+    max-width: 750px;
+    text-align: center;
+    pointer-events: none;
+}
+
+.cutscene-narration-inner {
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.0) 0%,
+        rgba(0, 0, 0, 0.75) 30%,
+        rgba(0, 0, 0, 0.85) 100%
+    );
+    border-radius: 6px;
+    padding: 24px 36px 20px;
+    border-bottom: 1px solid rgba(200, 134, 10, 0.25);
+}
+
+.cutscene-narration-text {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    line-height: 1.8;
+    color: rgba(232, 220, 200, 0.92);
+    font-style: italic;
+    letter-spacing: 0.4px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+    min-height: 3.6em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Typewriter cursor */
+.cutscene-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    background: rgba(200, 134, 10, 0.8);
+    margin-left: 3px;
+    vertical-align: text-bottom;
+    animation: cursor-blink 0.7s step-end infinite;
+}
+
+@keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0; }
+}
+
+/* ── Skip Button ────────────────────────────── */
+.cutscene-skip {
+    position: absolute;
+    bottom: 3vh;
+    right: 4vw;
+    z-index: 50;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(232, 220, 200, 0.35);
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(200, 134, 10, 0.15);
+    border-radius: 4px;
+    padding: 8px 18px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: all 0.3s ease;
+}
+
+.cutscene-skip:hover {
+    color: rgba(232, 220, 200, 0.8);
+    border-color: rgba(200, 134, 10, 0.5);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* ── Click to continue prompt ───────────────── */
+.cutscene-continue {
+    position: absolute;
+    bottom: 8vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 35;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+    font-style: italic;
+    letter-spacing: 1.5px;
+    color: rgba(200, 134, 10, 0);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+    transition: color 0.6s ease;
+    cursor: pointer;
+}
+
+.cutscene-continue.visible {
+    color: rgba(200, 134, 10, 0.6);
+    animation: continue-pulse 2s ease-in-out infinite;
+    pointer-events: auto;
+}
+
+@keyframes continue-pulse {
+    0%, 100% { opacity: 0.6; }
+    50%      { opacity: 1; }
+}
+
+/* ── Final fade to black ────────────────────── */
+#cutscene-overlay.fade-to-black {
+    animation: cutscene-blackout 1.5s ease-in forwards;
+}
+
+@keyframes cutscene-blackout {
+    0%   { background: transparent; }
+    100% { background: #000; }
+}
+
+/* Hide slides during final fade */
+#cutscene-overlay.fade-to-black .cutscene-slide {
+    opacity: 0 !important;
+    transition: opacity 1.2s ease;
+}
+
+#cutscene-overlay.fade-to-black .cutscene-narration {
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+/* ── Responsive ─────────────────────────────── */
+@media (max-width: 600px) {
+    .cutscene-narration {
+        width: 92%;
+        bottom: 12vh;
+    }
+    .cutscene-narration-inner {
+        padding: 18px 20px 16px;
+    }
+    .cutscene-letterbox-top,
+    .cutscene-letterbox-bottom {
+        height: 6vh;
+    }
+    .cutscene-skip {
+        font-size: 0.65rem;
+        padding: 6px 14px;
+    }
+}

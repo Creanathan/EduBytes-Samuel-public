@@ -6,6 +6,7 @@
     <meta name="description" content="NormaLIES — A Noir Detective Mystery. Investigate the Dégrasse mansion and solve the case.">
     <title>NormaLIES — A Detective Mystery</title>
     <link rel="stylesheet" href="./src/css/start.css">
+    <link rel="stylesheet" href="./src/css/cutscene.css">
     
     <!-- Core Services for Session Management -->
     <script src="./src/js/core/gamestate.js"></script>
@@ -69,6 +70,7 @@
         </div>
     </div>
 
+    <script src="./src/js/components/cutscene.js"></script>
     <script>
         /* ── Chapter Data ──────────────────────── */
         const chapters = [
@@ -112,7 +114,8 @@
 
         /* ── Navigation ────────────────────────── */
         function startGame() {
-            doLaunch();
+            // Play the intro cutscene, then navigate to the first room
+            CutsceneEngine.play('./src/rooms/outside.html');
         }
 
         function resumeGame() {
