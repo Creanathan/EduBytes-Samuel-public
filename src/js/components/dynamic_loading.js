@@ -16,16 +16,26 @@
         'nannys_room.html': ['living_room.html']
     };
 
-    const currentFile = window.location.pathname.split('/').pop();
+    let currentFile = window.location.pathname.split('/').pop();
+    if (!currentFile || !currentFile.endsWith('.html')) {
+        currentFile = 'index.html';
+    }
+
     const connections = PATH_CONFIG[currentFile] || [];
 
     // 1. Modern Speculation Rules (Chrome 108+)
     // Pre-renders the HTML of connected rooms in the background
     if (HTMLScriptElement.supports && HTMLScriptElement.supports('speculationrules')) {
+        const specRulesUrls = connections.map(room => {
+            if (currentFile === 'index.html') {
+                return './src/rooms/' + room;
+            }
+            return room;
+        });
         const specRules = {
             "prerender": [{
                 "source": "list",
-                "urls": connections
+                "urls": specRulesUrls
             }]
         };
         const script = document.createElement('script');
@@ -37,9 +47,6 @@
     // 2. Image Pre-caching (Legacy support & Non-Chrome)
     // Pre-loads the background images of adjacent rooms
     function prefetchImages() {
-        // Find project root
-        const rootURL = window.location.href.split('/src/')[0].replace(/\/$/, '');
-        
         // Map of room files to their primary background images
         const roomAssets = {
             'outside.html': '/src/assets/rooms/outside.png',
@@ -57,12 +64,12 @@
                 const link = document.createElement('link');
                 link.rel = 'prefetch';
                 link.as = 'image';
-                // Construct path relative to root
-                link.href = (currentFile === 'index.html' ? './src' : '..') + assetPath.replace('/src', '');
                 
-                // Fallback for root-relative hosting
-                if (window.location.protocol !== 'file:') {
-                    link.href = assetPath;
+                // Construct relative path
+                if (currentFile === 'index.html') {
+                    link.href = '.' + assetPath; // e.g. ./src/assets/rooms/outside.png
+                } else {
+                    link.href = '..' + assetPath.replace('/src', ''); // e.g. ../assets/rooms/outside.png
                 }
 
                 document.head.appendChild(link);
