@@ -3,180 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detective OS v3.0</title>
+    <title>Detective OS v4.2 // COMPACT</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="noise-overlay"></div>
+    <div class="scanlines"></div>
 
-    <!-- OS Global Header -->
-    <header class="os-header">
-        <div class="os-title-group">
-            <div class="os-logo">🕵️‍♂️</div>
-            <div>
-                <div class="os-version">Detective OS v3.0 // FORENSIC CORE</div>
-                <div id="step-label" style="font-size: 11px; color: var(--text-secondary);">System Online // Data Integrity: 0%</div>
+    <div id="os-root">
+        <!-- SYSTEM HEADER -->
+        <header class="os-header">
+            <div class="os-brand">
+                <div class="os-logo">🕵️</div>
+                <div>
+                    <div class="os-title">Detective OS v4.2</div>
+                </div>
             </div>
-        </div>
 
-        <div class="integrity-container">
-            <div id="integrity-bar" class="integrity-bar"></div>
-            <div class="integrity-label">DATA INTEGRITY: <span id="integrity-percent">0%</span></div>
-        </div>
-
-        <div style="display: flex; gap: 12px;">
-            <button class="nav-item" style="border: 1px solid var(--accent-red); color: var(--accent-red); font-size: 14px;" onclick="resetData()" title="Wipe & Re-import">🔄</button>
-            <button class="nav-item" style="border: 1px solid var(--accent-amber); color: var(--accent-amber); font-size: 14px;" onclick="closeTablet()">✕</button>
-        </div>
-    </header>
-
-    <div id="app-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="nav-item active" id="nav-database" onclick="switchTab('database')" title="Evidence Database">📋</div>
-            <div class="nav-item locked" id="nav-crossref" onclick="switchTab('crossref')" title="Cross-Reference Analysis">🔗</div>
-            <div class="nav-item locked" id="nav-accusation" onclick="switchTab('accusation')" title="File Official Accusation">⚖️</div>
-        </nav>
-
-        <!-- Main Workspace -->
-        <main class="main-view">
-            
-            <!-- DATABASE TAB -->
-            <section id="tab-database" class="panel">
-                <div id="error-banner" style="margin-bottom: 20px; display: flex; gap: 15px; background: rgba(255, 77, 77, 0.05); padding: 15px; border-radius: 12px; border-left: 4px solid var(--accent-red);">
-                    <div style="font-size: 24px;">⚠️</div>
-                    <div>
-                        <h3 style="color: var(--accent-red); font-size: 13px; text-transform: uppercase;">1NF Normalization Fault</h3>
-                        <p style="font-size: 12px; color: var(--text-secondary);">Non-atomic data detected in 'Observation' clusters. Manually repair cell lists to achieve 100% integrity.</p>
-                    </div>
-                    <button style="margin-left: auto; background: none; border: 1px solid var(--accent-amber); color: var(--accent-amber); padding: 4px 12px; border-radius: 4px; font-size: 10px; cursor: pointer;" onclick="showGuide()">MANUAL</button>
+            <div class="gauge-wrap">
+                <div class="gauge-meta">
+                    <span>Integrity</span>
+                    <span id="integrity-percent">0%</span>
                 </div>
-
-                <div class="search-container" style="display: flex; gap: 12px; margin-bottom: 20px;">
-                    <input type="text" id="db-search" placeholder="Filter registry..." style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 8px; padding: 10px 16px; color: #fff; font-family: var(--font-mono);">
-                    <button class="btn-primary" style="width: auto; padding: 0 20px; font-size: 12px;" onclick="validateDB()" id="validate-btn">VALIDATE REPAIR</button>
+                <div class="gauge-track">
+                    <div id="integrity-bar" class="gauge-fill"></div>
                 </div>
+            </div>
 
-                <div id="validate-feedback" style="margin-bottom: 15px; font-size: 12px; font-family: var(--font-mono); display: none;"></div>
+            <div class="os-controls">
+                <button id="manual-btn" class="ctrl-btn" onclick="showGuide()" title="Manual">📖</button>
+                <button class="ctrl-btn" onclick="closeTablet()" title="Exit">✕</button>
+            </div>
+        </header>
 
-                <div class="data-table-container">
-                    <table id="Detective-db">
-                        <thead>
-                            <tr><th>LOG_ID</th><th>SUBJECT</th><th>OBSERVATION</th><th>CMD</th></tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+        <div class="os-workspace">
+            <!-- NAVIGATION SIDEBAR -->
+            <nav class="os-nav">
+                <div class="nav-link active" id="nav-database" onclick="switchTab('database')" title="Database">📋</div>
+                <div class="nav-link locked" id="nav-crossref" onclick="switchTab('crossref')" title="Analysis">🔗</div>
+                <div class="nav-link locked" id="nav-accusation" onclick="switchTab('accusation')" title="Report">⚖️</div>
+                <div style="margin-top: auto;">
+                    <div class="nav-link" id="nav-tray-toggle" onclick="toggleTray()" title="Toggle Evidence Files" style="font-size: 16px;">📂</div>
                 </div>
+            </nav>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="view-container">
                 
-                <button onclick="addRow()" style="margin-top: 15px; background: none; border: 1px dashed var(--glass-border); color: var(--text-dim); width: 100%; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 11px;">+ APPEND ATOMIC DATA ROW</button>
-            </section>
+                <!-- DATABASE VIEW -->
+                <section id="tab-database">
+                    <div class="alert-banner">
+                        <div class="alert-icon">⚠️</div>
+                        <div class="alert-body">
+                            <h3 id="error-title">Integrity Breach</h3>
+                            <p id="error-text">Non-atomic data detected. Repair cell lists to proceed.</p>
+                        </div>
+                        <button class="action-btn" style="margin-left: auto; padding: 6px 12px; font-size: 9px;" onclick="validateDB()">VALIDATE</button>
+                    </div>
 
-            <!-- CROSS-REFERENCE TAB -->
-            <section id="tab-crossref" class="panel" style="display: none;">
-                <div style="margin-bottom: 20px;">
-                    <h3 style="color: var(--accent-amber); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">◈ Forensic Cross-Reference</h3>
-                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 5px;">Compare witness alibis against system registries to detect contradictions.</p>
+                    <div class="glass-panel">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <h2 style="font-size: 11px; text-transform: uppercase; color: var(--text-high);">Registry Search_Log_001</h2>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="db-search" placeholder="Filter..." style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); padding: 6px 12px; border-radius: 6px; color: #fff; font-family: var(--font-code); font-size: 10px; width: 120px;">
+                                <button class="action-btn" style="padding: 6px 10px; font-size: 9px;" onclick="addRow()">+ ROW</button>
+                            </div>
+                        </div>
+
+                        <div id="validate-feedback" style="margin-bottom: 12px; font-family: var(--font-code); font-size: 10px; display: none;"></div>
+
+                        <div class="table-wrap">
+                            <table id="Detective-db">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 80px;">ID</th>
+                                        <th style="width: 100px;">Subject</th>
+                                        <th>Observation Evidence</th>
+                                        <th style="width: 40px;">CMD</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CROSS-REFERENCE VIEW -->
+                <section id="tab-crossref" style="display: none;">
+                    <div class="glass-panel">
+                        <h2 style="font-size: 12px; text-transform: uppercase; color: var(--text-high); margin-bottom: 12px;">Analysis Engine</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 16px;">
+                            <select id="crossref-suspect" style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; color: #fff; font-family: var(--font-code); font-size: 10px;">
+                                <option value="">— SUSPECT —</option>
+                                <option value="Leduc">Leduc</option>
+                                <option value="Beatrix">Beatrix</option>
+                                <option value="Thomas">Thomas</option>
+                            </select>
+                            <input type="text" id="crossref-keyword" placeholder="KEYWORD" style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; color: #fff; font-family: var(--font-code); font-size: 10px;">
+                            <button class="action-btn" onclick="runCrossRef()">ANALYZE</button>
+                        </div>
+                        <div id="crossref-results" class="table-wrap" style="display: none;">
+                            <table>
+                                <thead><tr><th>ID</th><th>Subject</th><th>Observation</th></tr></thead>
+                                <tbody id="crossref-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div id="contradiction-alert" style="margin-top: 16px; display: none;"></div>
+                    </div>
+                </section>
+
+                <!-- ACCUSATION VIEW -->
+                <section id="tab-accusation" style="display: none;">
+                    <div class="glass-panel">
+                        <h2 style="font-size: 12px; text-transform: uppercase; color: var(--text-high); margin-bottom: 12px;">Case Report</h2>
+                        <div id="accusation-gate-msg" style="text-align: center; padding: 32px; border: 1px dashed var(--border-subtle); border-radius: 12px; color: var(--text-low); font-size: 11px;">
+                            Analyze data to finalize report.
+                        </div>
+                        <div id="accusation-panel" style="display: none;">
+                            <div id="investigation-summary" style="background: rgba(0,0,0,0.2); padding: 16px; border-radius: 10px; font-size: 11px; line-height: 1.5; color: var(--text-med); margin-bottom: 20px; border: 1px solid var(--border-subtle);"></div>
+                            <div id="suspect-btn-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 24px;"></div>
+                            <button class="action-btn" id="submit-btn" style="width: 100%;" onclick="submitAccusation()" disabled>SUBMIT ACCUSATION</button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- RIGHT SIDE TRAY -->
+            <aside class="side-tray" id="side-tray">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="tray-title">Evidence Files</div>
+                    <button onclick="toggleTray()" style="background:none; border:none; color:var(--text-low); cursor:pointer; font-size:14px;" class="tray-close-btn">✕</button>
                 </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; margin-bottom: 24px;">
-                    <select id="crossref-suspect" style="background: var(--bg-deep); border: 1px solid var(--glass-border); border-radius: 8px; padding: 10px; color: #fff; font-family: var(--font-mono);">
-                        <option value="">— SELECT SUSPECT —</option>
-                        <option value="Leduc">Leduc (Butler)</option>
-                        <option value="Beatrix">Beatrix (Nanny)</option>
-                        <option value="Thomas">Thomas (Partner)</option>
-                    </select>
-                    <input type="text" id="crossref-keyword" placeholder="LOCATION / KEYWORD" style="background: var(--bg-deep); border: 1px solid var(--glass-border); border-radius: 8px; padding: 10px; color: #fff; font-family: var(--font-mono);">
-                    <button class="btn-primary" style="width: auto; padding: 0 30px;" onclick="runCrossRef()">RUN ANALYSIS</button>
+                <div id="suspect-profiles-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                <div id="profile-placeholder" style="flex: 1; border: 1px dashed var(--border-subtle); border-radius: 12px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 10px; color: var(--text-low); padding: 16px;">
+                    Metadata encrypted.
                 </div>
-
-                <div id="crossref-results" class="data-table-container" style="display: none;">
-                    <table>
-                        <thead><tr><th>LOG_ID</th><th>SUBJECT</th><th>OBSERVATION</th></tr></thead>
-                        <tbody id="crossref-tbody"></tbody>
-                    </table>
-                </div>
-                <div id="contradiction-alert" style="margin-top: 20px; display: none;"></div>
-            </section>
-
-            <!-- ACCUSATION TAB -->
-            <section id="tab-accusation" class="panel" style="display: none;">
-                <div style="margin-bottom: 24px;">
-                    <h3 style="color: var(--accent-amber); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">⚖️ Final Forensic Report</h3>
-                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 5px;">Submit your findings to the Chief of Police. Ensure your evidence is solid.</p>
-                </div>
-
-                <div id="accusation-gate-msg" style="text-align: center; padding: 40px; color: var(--text-dim); border: 1px dashed var(--glass-border); border-radius: 12px;">
-                    Run Cross-Reference analysis to finalize the report.
-                </div>
-
-                <div id="accusation-panel" style="display: none;">
-                    <div id="investigation-summary" style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; font-size: 13px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 24px;"></div>
-                    
-                    <h4 style="font-size: 12px; text-transform: uppercase; color: var(--accent-amber); margin-bottom: 12px;">Primary Suspect Selection</h4>
-                    <div id="suspect-btn-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px;"></div>
-
-                    <button class="btn-primary" id="submit-btn" onclick="submitAccusation()" disabled>SUBMIT OFFICIAL ACCUSATION</button>
-                </div>
-            </section>
-        </main>
-
-        <!-- Right Side Panel (Profiles) -->
-        <aside class="side-panel">
-            <div style="font-size: 10px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">◈ Decrypted Profiles</div>
-            <div id="suspect-profiles-container" style="display: flex; flex-direction: column; gap: 16px;">
-                <!-- Profile cards injected here -->
-            </div>
-            <div id="profile-placeholder" style="flex: 1; border: 1px dashed var(--glass-border); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 11px; text-align: center; padding: 20px;">
-                Metadata encrypted.<br>Normalize data clusters to decrypt witness profiles.
-            </div>
-        </aside>
-    </div>
-
-    <!-- Overlay States -->
-    <div id="screen-overlay" class="screen-overlay">
-        <div class="setup-card" id="setup-card">
-            <div id="setup-icon" style="font-size: 64px; margin-bottom: 20px;">🔍</div>
-            <h2 id="setup-title">Detective OS</h2>
-            <p id="setup-text">System standby. Awaiting external data source.</p>
-            <button id="import-btn" class="btn-primary" onclick="startImport()" style="display: none;">INITIALIZE SCAN</button>
-            
-            <!-- Loading state inside same card -->
-            <div id="loading-box" style="display: none; width: 100%; margin-top: 20px;">
-                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;">
-                    <div id="loading-bar-fill" style="width: 0%; height: 100%; background: var(--accent-amber);"></div>
-                </div>
-                <div id="loading-text" style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-amber); margin-top: 10px; text-transform: uppercase;">Decrypting...</div>
-            </div>
-
-            <!-- Crash state -->
-            <button id="repair-btn" class="btn-primary" style="display: none; background: var(--accent-red);" onclick="showRepairInterface()">MANUAL REPAIR</button>
+            </aside>
         </div>
     </div>
 
-    <!-- Guide Modal -->
-    <div id="guide-modal" class="screen-overlay" style="display: none; z-index: 3000;">
-        <div class="setup-card" style="max-width: 600px; text-align: left;">
-            <h3 style="color: var(--accent-amber); margin-bottom: 15px;">FORENSIC NORMALIZATION MANUAL</h3>
-            <div style="font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
-                <p><strong>1. Atomicity:</strong> Every cell in the 'Observation' column must contain exactly ONE room. If a witness lists multiple rooms, use '+ APPEND' to create new rows and split them.</p>
-                <p style="margin-top: 10px;"><strong>2. Composite Key:</strong> Once data is atomic, click the 'LOG_ID' and 'OBSERVATION' headers to uniquely identify every row. This prevents data duplication errors.</p>
+    <!-- OVERLAYS -->
+    <div id="screen-overlay" class="overlay">
+        <div class="modal-content" id="setup-card">
+            <div id="setup-icon" style="font-size: 48px; margin-bottom: 16px;">📡</div>
+            <h2 id="setup-title" style="color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-size: 16px;">Detective OS</h2>
+            <p id="setup-text" style="color: var(--text-med); font-size: 12px; margin-bottom: 24px;">System Standby.</p>
+            <button id="import-btn" class="action-btn" onclick="startImport()" style="display: none; width: 100%;">INITIALIZE SCAN</button>
+            <div id="loading-box" style="display: none; width: 100%; margin-top: 20px;">
+                <div class="gauge-track"><div id="loading-bar-fill" class="gauge-fill" style="width: 0%;"></div></div>
+                <div id="loading-text" style="font-family: var(--font-code); font-size: 9px; color: var(--accent-gold); margin-top: 8px;">Decrypting...</div>
             </div>
-            <button class="btn-primary" style="margin-top: 30px;" onclick="hideGuide()">RETURN TO WORKSPACE</button>
+            <button id="repair-btn" class="action-btn" style="display: none; width: 100%; background: var(--accent-error);" onclick="showRepairInterface()">MANUAL REPAIR</button>
+        </div>
+    </div>
+
+    <div id="guide-modal" class="overlay" style="display: none;">
+        <div class="modal-content" style="text-align: left;">
+            <h2 style="color: var(--accent-gold); margin-bottom: 16px; font-size: 14px;">NORMALIZATION MANUAL</h2>
+            <div style="font-size: 11px; line-height: 1.5; color: var(--text-med);">
+                <p><strong>1. Atomicity:</strong> Split comma-separated lists into separate rows.</p>
+                <p style="margin-top: 10px;"><strong>2. Keys:</strong> Select Log_ID and Observation headers.</p>
+            </div>
+            <button class="action-btn" style="margin-top: 24px; width: 100%;" onclick="hideGuide()">RESUME</button>
         </div>
     </div>
 
     <script src="logic.js"></script>
     <script>
         function closeTablet() {
-            if (window !== window.parent) {
-                window.parent.postMessage({ type: 'closeTablet' }, '*');
-            } else {
-                window.history.back();
-            }
+            if (window !== window.parent) window.parent.postMessage({ type: 'closeTablet' }, '*');
+            else window.history.back();
         }
-        document.addEventListener('keydown', (e) => {
-            if (e.key === "Escape") closeTablet();
-        });
+        function toggleTray() {
+            const tray = document.getElementById('side-tray');
+            tray.classList.toggle('open');
+            document.getElementById('nav-tray-toggle').classList.toggle('active');
+        }
     </script>
 </body>
 </html>
