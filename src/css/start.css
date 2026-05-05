@@ -100,6 +100,19 @@ body {
     50%      { opacity: 1; }
 }
 
+.home-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 15px rgba(200, 134, 10, 0.4));
+    animation: logo-glow 4s ease-in-out infinite;
+}
+
+@keyframes logo-glow {
+    0%, 100% { filter: drop-shadow(0 0 15px rgba(200, 134, 10, 0.4)); transform: scale(1); }
+    50%      { filter: drop-shadow(0 0 25px rgba(200, 134, 10, 0.6)); transform: scale(1.05); }
+}
+
 .title-main {
     font-size: clamp(2.8rem, 7vw, 5rem);
     font-weight: 300;
