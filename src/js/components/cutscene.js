@@ -19,13 +19,11 @@ const CutsceneEngine = (() => {
             image: './src/assets/cutscenes/cutscene_auto(2).png',
             kenBurns: 'kb-pan-left',
             narration: 'A cold rain hammered the empty lot. The kind of night that made honest men stay home… and guilty ones get careless.',
-            duration: 8000,
         },
         {
             image: './src/assets/cutscenes/cutscene_auto(1).png',
             kenBurns: 'kb-zoom-in',
             narration: '"Dekoning. The Dégrasse estate — get there before the rain washes everything away." The line went dead. Some invitations you can\'t refuse.',
-            duration: 9000,
         },
     ];
 
@@ -39,6 +37,9 @@ const CutsceneEngine = (() => {
     let typingInterval = null;
     let isPlaying = false;
     let navigateUrl = './src/rooms/outside.html';
+
+    /* ── Click / key-advance resolver ─────────── */
+    let advanceResolve = null;        // resolved when user clicks to continue
 
     /* ── Build the DOM ────────────────────────── */
     function buildOverlay() {
@@ -61,6 +62,7 @@ const CutsceneEngine = (() => {
                     <div class="cutscene-narration-text" id="cutscene-text"></div>
                 </div>
             </div>
+            <div class="cutscene-continue" id="cutscene-continue">Click to continue…</div>
             <button class="cutscene-skip" id="cutscene-skip" aria-label="Skip cutscene">Skip ▸▸</button>
         `;
 
@@ -76,7 +78,74 @@ const CutsceneEngine = (() => {
         document.body.appendChild(overlayEl);
 
         // Skip button handler
-        document.getElementById('cutscene-skip').addEventListener('click', skip);
+        document.getElementById('cutscene-skip').addEventListener('click', (e) => {
+            e.stopPropagation();
+            skip();
+        });
+
+        // Click anywhere on the overlay to advance
+        overlayEl.addEventListener('click', handleAdvanceClick);
+    }
+
+    /* ── Handle advance click ─────────────────── */
+    function handleAdvanceClick(e) {
+        // Don't advance if clicking the skip button
+        if (e.target.closest('.cutscene-skip')) return;
+        if (!isPlaying) return;
+
+        // If typing is still in progress, skip to end of typing
+        if (typingInterval) {
+            finishTypingImmediately();
+            return;
+        }
+
+        // If we're waiting for the user to advance, resolve
+        if (advanceResolve) {
+            const resolve = advanceResolve;
+            advanceResolve = null;
+            hideContinuePrompt();
+            resolve();
+        }
+    }
+
+    /* ── Finish typing immediately ────────────── */
+    function finishTypingImmediately() {
+        if (!typingInterval) return;
+        clearInterval(typingInterval);
+        typingInterval = null;
+
+        // Fill in the remaining text
+        const el = document.getElementById('cutscene-text');
+        const textSpan = el.querySelector('span:first-child');
+        const cursor = el.querySelector('.cutscene-cursor');
+        if (textSpan && currentNarration) {
+            textSpan.textContent = currentNarration;
+        }
+        if (cursor) {
+            cursor.style.opacity = '0';
+            cursor.style.transition = 'opacity 0.5s ease';
+        }
+
+        // Trigger the typing-done callback
+        if (typingDoneCallback) {
+            const cb = typingDoneCallback;
+            typingDoneCallback = null;
+            cb();
+        }
+    }
+
+    let currentNarration = '';
+    let typingDoneCallback = null;
+
+    /* ── Show / hide "Click to continue" ──────── */
+    function showContinuePrompt() {
+        const el = document.getElementById('cutscene-continue');
+        if (el) el.classList.add('visible');
+    }
+
+    function hideContinuePrompt() {
+        const el = document.getElementById('cutscene-continue');
+        if (el) el.classList.remove('visible');
     }
 
     /* ── Typewriter effect ────────────────────── */
@@ -84,6 +153,8 @@ const CutsceneEngine = (() => {
         const el = document.getElementById('cutscene-text');
         el.innerHTML = '';
         let charIndex = 0;
+        currentNarration = text;
+        typingDoneCallback = callback;
 
         // Create span for text and cursor
         const textSpan = document.createElement('span');
@@ -100,6 +171,8 @@ const CutsceneEngine = (() => {
             } else {
                 clearInterval(typingInterval);
                 typingInterval = null;
+                currentNarration = '';
+                typingDoneCallback = null;
                 // Keep cursor blinking for a moment, then remove
                 setTimeout(() => {
                     cursor.style.opacity = '0';
@@ -108,6 +181,14 @@ const CutsceneEngine = (() => {
                 if (callback) callback();
             }
         }, TYPING_SPEED);
+    }
+
+    /* ── Wait for user click to continue ──────── */
+    function waitForClick() {
+        return new Promise((resolve) => {
+            showContinuePrompt();
+            advanceResolve = resolve;
+        });
     }
 
     /* ── Play a single slide ──────────────────── */
@@ -126,13 +207,10 @@ const CutsceneEngine = (() => {
                 if (!isPlaying) return resolve();
 
                 typeText(slide.narration, () => {
-                    // Hold for remaining duration after typing finishes
-                    const typingTime = slide.narration.length * TYPING_SPEED;
-                    const holdTime = Math.max(slide.duration - typingTime, 1500);
-
-                    currentTimeout = setTimeout(() => {
+                    // Narration done — wait for user click to continue
+                    waitForClick().then(() => {
                         resolve();
-                    }, holdTime);
+                    });
                 });
             }, 600);
         });
@@ -186,6 +264,8 @@ const CutsceneEngine = (() => {
         isPlaying = false;
         clearInterval(typingInterval);
         clearTimeout(currentTimeout);
+        advanceResolve = null;
+        hideContinuePrompt();
 
         // Fade all slides out and go to black
         overlayEl.classList.add('fade-to-black');
@@ -207,9 +287,31 @@ const CutsceneEngine = (() => {
     /* ── Keyboard support ─────────────────────── */
     function onKeyDown(e) {
         if (!isPlaying) return;
-        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+
+        // Escape always skips entirely
+        if (e.key === 'Escape') {
             e.preventDefault();
             skip();
+            return;
+        }
+
+        // Enter / Space advance (same as clicking)
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+
+            // If typing, finish it immediately
+            if (typingInterval) {
+                finishTypingImmediately();
+                return;
+            }
+
+            // If waiting for click, advance
+            if (advanceResolve) {
+                const resolve = advanceResolve;
+                advanceResolve = null;
+                hideContinuePrompt();
+                resolve();
+            }
         }
     }
 

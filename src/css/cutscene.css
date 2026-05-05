@@ -200,6 +200,35 @@
     background: rgba(0, 0, 0, 0.7);
 }
 
+/* ── Click to continue prompt ───────────────── */
+.cutscene-continue {
+    position: absolute;
+    bottom: 8vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 35;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+    font-style: italic;
+    letter-spacing: 1.5px;
+    color: rgba(200, 134, 10, 0);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+    transition: color 0.6s ease;
+    cursor: pointer;
+}
+
+.cutscene-continue.visible {
+    color: rgba(200, 134, 10, 0.6);
+    animation: continue-pulse 2s ease-in-out infinite;
+    pointer-events: auto;
+}
+
+@keyframes continue-pulse {
+    0%, 100% { opacity: 0.6; }
+    50%      { opacity: 1; }
+}
+
 /* ── Final fade to black ────────────────────── */
 #cutscene-overlay.fade-to-black {
     animation: cutscene-blackout 1.5s ease-in forwards;
