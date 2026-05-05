@@ -73,15 +73,80 @@ const DIALOGS = {
         // Source: Chapter 1 — Interacties met personen.docx
         leduc: [
             {
-                // STATE 1: First interaction ever
+                // STATE 1: First interaction
                 condition: "!GameState.hasFlag('talked_to_leduc')",
-                // Multi-step: "In the flesh." → then "Shall I take you?"
                 steps: [
                     {
                         speaker: "Jeanne-Paul Leduc (Butler)",
                         lines: [
                             "Welcome, good sir. You must be the befamed detective Dekoning?"
                         ],
+                        options: [
+                            { label: "In the flesh.", action: "exit" }
+                        ]
+                    },
+                    {
+                        speaker: "Jeanne-Paul Leduc (Butler)",
+                        lines: [
+                            "We thank you for coming on such short notice. This is the first time something like this has ever happened at the Degrasse mansion and everyone is completely taken aback.",
+                            "Mr. Souvellier is waiting for you in the living room. Please speak to him before we proceed with the investigation."
+                        ],
+                        options: [
+                            { label: "I will.",  action: "setFlag:talked_to_leduc|exit" }
+                        ]
+                    }
+                ]
+            },
+            {
+                // STATE 2: Returned after talking, but not yet referred to crime scene by Thomas
+                condition: "GameState.hasFlag('talked_to_leduc') && !GameState.hasFlag('referred_to_crime_scene')",
+                speaker: "Jeanne-Paul Leduc (Butler)",
+                lines: [
+                    "Mr. Souvellier is waiting for you in the living room. It's best if you speak to him first."
+                ],
+                options: [
+                    { label: "Understood.",  action: "exit" }
+                ]
+            },
+            {
+                // STATE 2b: Referred by Thomas, Crime scene not unlocked yet
+                condition: "GameState.hasFlag('referred_to_crime_scene') && !GameState.hasFlag('crime_scene_unlocked')",
+                steps: [
+                    {
+                        speaker: "Jeanne-Paul Leduc (Butler)",
+                        lines: [
+                            "I understand Mr. Souvellier has briefed you. The crime scene is locked to preserve evidence, but I can open it for you now."
+                        ],
+                        options: [
+                            { label: "Please.",  action: "setFlag:crime_scene_unlocked|showBtn:btn-top|exit" },
+                            { label: "Later.",   action: "exit" }
+                        ]
+                    }
+                ]
+            },
+            {
+                // STATE 3: Crime scene unlocked but not yet visited
+                condition: "GameState.hasFlag('crime_scene_unlocked') && !GameState.hasFlag('crime_scene_visited')",
+                speaker: "Jeanne-Paul Leduc (Butler)",
+                lines: [
+                    "The crime scene is just up ahead. I hope that USB stick gives you the answers you need."
+                ],
+                options: [
+                    { label: "Thanks.", action: "exit" }
+                ]
+            },
+            {
+                // STATE 4: Crime scene visited
+                condition: "GameState.hasFlag('crime_scene_visited')",
+                speaker: "Jeanne-Paul Leduc (Butler)",
+                lines: [
+                    "I hope you found what you were looking for at the scene."
+                ],
+                options: [
+                    { label: "I did.", action: "exit" }
+                ]
+            }
+        ],
                         options: [
                             { label: "In the flesh.", action: "exit" }
                         ]
@@ -227,7 +292,31 @@ const DIALOGS = {
         // ── Thomas Souvellier — 3 conditional states ──
         thomas: [
             {
-                // [AI - ANTIGRAVITY] - NEW STATE: Giving the Physical Ledger
+                // [AI - ANTIGRAVITY] - NEW STATE: Referring to the Crime Scene USB
+                condition: "!GameState.hasFlag('referred_to_crime_scene')",
+                speaker: "Thomas Souvellier",
+                lines: [
+                    "Detective, I'm glad you're here. The local police... they've been so sloppy.",
+                    "They couldn't even digitize the search logs properly. They left an encrypted USB flash drive on the desk in the Crime Scene Bureau.",
+                    "Please, ask Leduc to let you into the crime scene and retrieve that USB. If you can import the data into your tablet and fix it, maybe you can find what they missed."
+                ],
+                options: [
+                    { label: "I'll get it.", action: "setFlag:referred_to_crime_scene|setFlag:talked_to_thomas|exit" }
+                ]
+            },
+            {
+                // STATE 2: Subsequent interactions
+                condition: "GameState.hasFlag('referred_to_crime_scene')",
+                speaker: "Thomas Souvellier",
+                lines: [
+                    "Please find whoever did this. We've already tried going to the police, but my father doesn't think they have the evidence.",
+                    "Did you find the USB stick at the Crime Scene yet? Please help us."
+                ],
+                options: [
+                    { label: "I'm working on it.", action: "exit" }
+                ]
+            }
+        ] - NEW STATE: Giving the Physical Ledger
                 condition: "!Inventory.hasItem('police_ledger')",
                 speaker: "Thomas Souvellier",
                 lines: [
