@@ -113,7 +113,6 @@ function checkSetup() {
     reimportBtn.style.display = "none";
 
     // Robust item check (Parent -> LocalStorage fallback)
-    const hasLedger = checkInventoryLocal('police_ledger');
     const hasUSB = checkInventoryLocal('usb_stick');
 
     if (hasUSB) {
@@ -123,17 +122,10 @@ function checkSetup() {
         importBtn.innerText = "DECRYPT & IMPORT";
         importBtn.style.display = "block";
         importBtn.onclick = startImport;
-    } else if (hasLedger) {
-        icon.innerText = "\uD83D\uDCC1";
-        title.innerText = "Data Ledger Detected";
-        text.innerText = "Physical Detective registries found. Ready to scan and import into local registry for normalization.";
-        importBtn.innerText = "SCAN & IMPORT";
-        importBtn.style.display = "block";
-        importBtn.onclick = startImport;
     } else {
         icon.innerText = "\uD83D\uDCE1";
         title.innerText = "No Data Source Detected";
-        text.innerText = "Detective OS is online but local registries are empty. Please obtain a data source (Ledger or USB) to begin analysis.";
+        text.innerText = "Detective OS is online but local registries are empty. Please obtain a data source (USB) to begin analysis.";
         importBtn.innerText = "RESCAN SYSTEM";
         importBtn.style.display = "block";
         importBtn.onclick = checkSetup;

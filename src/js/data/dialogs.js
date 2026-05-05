@@ -90,23 +90,33 @@ const DIALOGS = {
                         speaker: "Jeanne-Paul Leduc (Butler)",
                         lines: [
                             "We thank you for coming on such short notice. This is the first time something like this has ever happened at the Degrasse mansion and everyone is completely taken aback.",
-                            "Shall I take you to the crime scene? Or would you rather talk to the people present first?"
+                            "Mr. Souvellier is waiting for you in the living room. Please speak to him before we proceed with the investigation."
                         ],
                         options: [
-                            { label: "Please.",  action: "setFlag:talked_to_leduc|setFlag:crime_scene_unlocked|showBtn:btn-top|exit" },
-                            { label: "Later.",   action: "setFlag:talked_to_leduc|exit" }
+                            { label: "I will.",  action: "setFlag:talked_to_leduc|exit" }
                         ]
                     }
                 ]
             },
             {
-                // STATE 2: Returned after saying "Later." — crime scene not yet unlocked
-                condition: "GameState.hasFlag('talked_to_leduc') && !GameState.hasFlag('crime_scene_unlocked') && !GameState.hasFlag('crime_scene_visited')",
+                // STATE 2: Returned after talking, but not yet referred to crime scene by Thomas
+                condition: "GameState.hasFlag('talked_to_leduc') && !GameState.hasFlag('referred_to_crime_scene')",
+                speaker: "Jeanne-Paul Leduc (Butler)",
+                lines: [
+                    "Mr. Souvellier is waiting for you in the living room. It's best if you speak to him first."
+                ],
+                options: [
+                    { label: "Understood.",  action: "exit" }
+                ]
+            },
+            {
+                // STATE 2b: Referred by Thomas, Crime scene not unlocked yet
+                condition: "GameState.hasFlag('referred_to_crime_scene') && !GameState.hasFlag('crime_scene_unlocked')",
                 steps: [
                     {
                         speaker: "Jeanne-Paul Leduc (Butler)",
                         lines: [
-                            "Are you ready to go to the crime scene now? Mr. Souvellier is in the living room with the police files."
+                            "I understand Mr. Souvellier has briefed you. The crime scene is locked to preserve evidence, but I can open it for you now."
                         ],
                         options: [
                             { label: "Please.",  action: "setFlag:crime_scene_unlocked|showBtn:btn-top|exit" },

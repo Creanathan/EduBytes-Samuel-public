@@ -284,11 +284,10 @@
         
         // [AI - ANTIGRAVITY] - Logical Blinking: 
         // Only blink if we have data to fix (ledger) but haven't fixed it yet.
-        const hasLedger = window.Inventory && window.Inventory.hasItem('police_ledger');
         const hasUSB = window.Inventory && window.Inventory.hasItem('usb_stick');
         const isUnlocked = localStorage.getItem('Detective_os_unlocked') === 'true';
 
-        if ((hasLedger || hasUSB) && !isUnlocked) {
+        if (hasUSB && !isUnlocked) {
             dot.classList.add('active');
         } else {
             dot.classList.remove('active');
