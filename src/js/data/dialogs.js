@@ -48,7 +48,6 @@ const DIALOGS = {
         {
             speaker: "Det. Louis Dekoning",
             lines: [
-                // [DESIGNER] - Atmospheric entry
                 "The air in here is heavy... colder than the rest of the house.",
                 "And there she is. Amelia Souvellier. Found earlier this morning by the butler.",
                 "I need to be careful. Every misplaced footprint could cost us the case.",
@@ -64,13 +63,10 @@ const DIALOGS = {
 
     // ────────────────────────────────────────────────
     // INTERACTIVE OBJECT INTERACTIONS
-    // Exact text from Chapter 1 — Interacties met dingen.docx
-    // Exact dialogue from Chapter 1 — Interacties met personen.docx
     // ────────────────────────────────────────────────
     interactions: {
 
-        // ── Jeanne-Paul Leduc — 4 conditional states ──
-        // Source: Chapter 1 — Interacties met personen.docx
+        // ── Jeanne-Paul Leduc (Butler) ──
         leduc: [
             {
                 // STATE 1: First interaction
@@ -147,77 +143,11 @@ const DIALOGS = {
                 ]
             }
         ],
-                        options: [
-                            { label: "In the flesh.", action: "exit" }
-                        ]
-                    },
-                    {
-                        speaker: "Jeanne-Paul Leduc (Butler)",
-                        lines: [
-                            "We thank you for coming on such short notice. This is the first time something like this has ever happened at the Degrasse mansion and everyone is completely taken aback.",
-                            "Mr. Souvellier is waiting for you in the living room. Please speak to him before we proceed with the investigation."
-                        ],
-                        options: [
-                            { label: "I will.",  action: "setFlag:talked_to_leduc|exit" }
-                        ]
-                    }
-                ]
-            },
-            {
-                // STATE 2: Returned after talking, but not yet referred to crime scene by Thomas
-                condition: "GameState.hasFlag('talked_to_leduc') && !GameState.hasFlag('referred_to_crime_scene')",
-                speaker: "Jeanne-Paul Leduc (Butler)",
-                lines: [
-                    "Mr. Souvellier is waiting for you in the living room. It's best if you speak to him first."
-                ],
-                options: [
-                    { label: "Understood.",  action: "exit" }
-                ]
-            },
-            {
-                // STATE 2b: Referred by Thomas, Crime scene not unlocked yet
-                condition: "GameState.hasFlag('referred_to_crime_scene') && !GameState.hasFlag('crime_scene_unlocked')",
-                steps: [
-                    {
-                        speaker: "Jeanne-Paul Leduc (Butler)",
-                        lines: [
-                            "I understand Mr. Souvellier has briefed you. The crime scene is locked to preserve evidence, but I can open it for you now."
-                        ],
-                        options: [
-                            { label: "Please.",  action: "setFlag:crime_scene_unlocked|showBtn:btn-top|exit" },
-                            { label: "Later.",   action: "exit" }
-                        ]
-                    }
-                ]
-            },
-            {
-                // STATE 3: Crime scene unlocked but not yet visited
-                condition: "GameState.hasFlag('crime_scene_unlocked') && !GameState.hasFlag('crime_scene_visited')",
-                speaker: "Jeanne-Paul Leduc (Butler)",
-                lines: [
-                    "The crime scene is just up ahead. Mr. Souvellier has the police registries in the living room if you need them."
-                ],
-                options: [
-                    { label: "Thanks.", action: "exit" }
-                ]
-            },
-            {
-                // STATE 4: Crime scene visited
-                condition: "GameState.hasFlag('crime_scene_visited')",
-                speaker: "Jeanne-Paul Leduc (Butler)",
-                lines: [
-                    "I hope you found what you were looking for. Mr. Souvellier in the living room might have the Detective Tablet if they left it behind."
-                ],
-                options: [
-                    { label: "I'll check.", action: "exit" }
-                ]
-            }
-        ],
 
-        // ── Beatrix Lémur — 3 conditional states ──
+        // ── Beatrix Lémur (Nanny) ──
         beatrix: [
             {
-                // [AI - ANTIGRAVITY] - NEW STATE: Confrontation about the alibi contradiction
+                // Confrontation about the alibi contradiction
                 condition: "GameState.hasFlag('accusation_filed_beatrix') && !GameState.hasFlag('has_nannys_key')",
                 speaker: "Beatrix Lémur",
                 lines: [
@@ -232,7 +162,7 @@ const DIALOGS = {
                 ]
             },
             {
-                // [AI - ANTIGRAVITY] - NEW STATE: Confrontation after searching her room
+                // Confrontation after searching her room
                 condition: "GameState.hasFlag('nannys_room_visited')",
                 speaker: "Beatrix Lémur",
                 lines: [
@@ -246,7 +176,7 @@ const DIALOGS = {
                 ]
             },
             {
-                // STATE 1: First interaction (condition per doc: talked to butler + not visited crime scene)
+                // STATE 1: First interaction
                 condition: "!GameState.hasFlag('talked_to_beatrix')",
                 steps: [
                     {
@@ -261,7 +191,6 @@ const DIALOGS = {
                         ]
                     },
                     {
-                        // This step only reached via "And you are?" (Leave uses "close" to skip)
                         speaker: "Beatrix Lémur",
                         lines: [
                             "My name is Beatrix Lémur, the nanny of the triplets.",
@@ -289,7 +218,7 @@ const DIALOGS = {
             }
         ],
 
-        // ── Thomas Souvellier — 3 conditional states ──
+        // ── Thomas Souvellier ──
         thomas: [
             {
                 // [AI - ANTIGRAVITY] - NEW STATE: Referring to the Crime Scene USB
@@ -316,46 +245,9 @@ const DIALOGS = {
                     { label: "I'm working on it.", action: "exit" }
                 ]
             }
-        ] - NEW STATE: Giving the Physical Ledger
-                condition: "!Inventory.hasItem('police_ledger')",
-                speaker: "Thomas Souvellier",
-                lines: [
-                    "Detective, I'm glad you're here. The local police... they've been so sloppy.",
-                    "They left these physical registries behind. They said the search logs are a mess and they couldn't even digitize them properly.",
-                    "Please, take these files. If you can import them into your tablet and fix their data, maybe you can find what they missed."
-                ],
-                options: [
-                    { label: "Take Files", action: "addItem:police_ledger|exit" }
-                ]
-            },
-            {
-                // STATE 1: Initial meeting (if they already have the files but haven't talked to him fully)
-                condition: "!GameState.hasFlag('talked_to_thomas')",
-                speaker: "Thomas Souvellier",
-                lines: [
-                    "Please find whoever did this. We've already tried going to the police, but my father doesn't think they have the evidence.",
-                    "Please help us."
-                ],
-                options: [
-                    { label: "I'll do my best.", action: "setFlag:talked_to_thomas|exit" }
-                ]
-            },
-            {
-                // STATE 2: Subsequent interactions
-                condition: "GameState.hasFlag('talked_to_thomas')",
-                speaker: "Thomas Souvellier",
-                lines: [
-                    "Please find whoever did this. Please."
-                ],
-                options: [
-                    { label: "I'll do my best.", action: "exit" }
-                ]
-            }
         ],
 
         // ── Interactable Objects ──
-        // Source: Chapter 1 — Interacties met dingen.docx
-
         mirror: {
             speaker: "Det. Louis Dekoning",
             lines: ["Maybe I should've shaved."],
@@ -370,7 +262,6 @@ const DIALOGS = {
 
         piano: [
             {
-                // [AI - ANTIGRAVITY] - Clue revealed by tablet
                 condition: "GameState.hasFlag('database_normalized')",
                 speaker: "Det. Louis Dekoning",
                 lines: [
@@ -381,7 +272,6 @@ const DIALOGS = {
                 options: [{ label: "Close", action: "exit" }]
             },
             {
-                // [DESIGNER] - Default interaction
                 condition: "true",
                 speaker: "Det. Louis Dekoning",
                 lines: ["I shouldn't waste any time playing a tune. There is a murderer on the loose."],
@@ -389,10 +279,8 @@ const DIALOGS = {
             }
         ],
 
-        // Door in Living Room — leads to Nanny's Room
         door_nannys_room: [
             {
-                // [AI - ANTIGRAVITY] - Unlocking progression
                 condition: "GameState.hasFlag('has_nannys_key')",
                 speaker: "Det. Louis Dekoning",
                 lines: ["The Nanny's room. I have the key.", "The door is now open."],
@@ -402,21 +290,12 @@ const DIALOGS = {
                 ]
             },
             {
-                // [DESIGNER] - Locked state
                 condition: "true",
                 speaker: "Det. Louis Dekoning",
                 lines: ["Locked. Best to ask for a key later."],
                 options: [{ label: "Close", action: "exit" }]
             }
         ],
-        door_nannys_room_unlocked: {
-            speaker: "Det. Louis Dekoning",
-            lines: ["The Nanny's room. I have the key.", "The door is now open."],
-            options: [
-                { label: "Enter", action: "setFlag:nannys_room_unlocked|goTo:nannys_room.html" },
-                { label: "Stay",  action: "setFlag:nannys_room_unlocked|setBackground:../assets/rooms/living_room_open.png|showBtn:btn-top|hideObj:obj-door|playSound:door|exit" }
-            ]
-        },
 
         cradle: {
             speaker: "Det. Louis Dekoning",
@@ -433,7 +312,6 @@ const DIALOGS = {
             options: [{ label: "Close", action: "exit" }]
         },
 
-        // Crime Scene objects (forensic investigation — implied by crime_scene room)
         body: {
             speaker: "Det. Louis Dekoning",
             lines: [
@@ -462,7 +340,6 @@ const DIALOGS = {
             options: [{ label: "Close", action: "exit" }]
         },
 
-        // ── [AI - ANTIGRAVITY] - Nanny's Room discovery interactions ──
         window: {
             speaker: "Det. Louis Dekoning",
             lines: [
@@ -471,6 +348,7 @@ const DIALOGS = {
             ],
             options: [{ label: "Close", action: "exit" }]
         },
+
         bed: {
             speaker: "Det. Louis Dekoning",
             lines: [
@@ -479,6 +357,7 @@ const DIALOGS = {
             ],
             options: [{ label: "Close", action: "exit" }]
         },
+
         dresser: {
             speaker: "Det. Louis Dekoning",
             lines: [
@@ -487,6 +366,7 @@ const DIALOGS = {
             ],
             options: [{ label: "Close", action: "exit" }]
         },
+
         cabinet: {
             speaker: "Det. Louis Dekoning",
             lines: [

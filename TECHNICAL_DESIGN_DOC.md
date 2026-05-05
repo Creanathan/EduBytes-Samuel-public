@@ -9,6 +9,7 @@ This document standardizes the interaction logic and state requirements for Chap
 | Flag | Logic Trigger | Purpose |
 | :--- | :--- | :--- |
 | `talked_to_leduc` | Dialogue with Butler | Tracks initial greeting. |
+| `referred_to_crime_scene` | Dialogue with Thomas | Unlocks the Butler's option to open the Crime Scene. |
 | `crime_scene_unlocked` | Butler's "Please" option | Reveals the Up arrow to the Crime Scene. |
 | `crime_scene_visited` | Crime Scene entry monologue | Tracks progression into the investigation phase. |
 | `database_normalized` | 1NF Puzzle completion | Unlocks trust-building dialogue with Butler. |
@@ -32,7 +33,7 @@ This document standardizes the interaction logic and state requirements for Chap
 *   **Door (Nanny's)**: 
     *   *Default*: "Locked. Best to ask for a key later."
     *   *With Key*: Unlocks the room and changes the background to the "Open Door" version.
-*   **Thomas**: Grieving partner; hiring dialogue.
+*   **Thomas**: Grieving partner; provides the referral to the Crime Scene and instructions about the USB stick.
 
 ### Nursery Objects
 *   **Cradle**: "Best not to wake them up..."
@@ -62,7 +63,7 @@ This document standardizes the interaction logic and state requirements for Chap
 - **Hamburger Menu**: Dedicated to system-level navigation (Home) and settings (Audio). Investigative tools are excluded to maintain immersion.
 - **Inventory**: The primary investigative hub (💼 icon) located in the bottom-right. Uses a glassmorphic drawer design. Labels are clean — no redundant headings.
 - **Detective Tablet**: Integrated as a permanent "Tool" inside the Inventory drawer.
-- **Interaction Model**: Physical items collected in the world (USB, Ledger) are imported through the Tablet interface within the Inventory.
+- **Interaction Model**: Physical items collected in the world (USB) are imported through the Tablet interface within the Inventory.
 
 ---
 
@@ -75,7 +76,7 @@ The Detective Tablet is an in-game forensic tool that teaches First Normal Form 
 
 | State | Condition | UI Shown |
 | :--- | :--- | :--- |
-| **No Data Source** | No USB or Ledger in inventory | "No Data Source Detected" setup screen |
+| **No Data Source** | No USB in inventory | "No Data Source Detected" setup screen |
 | **USB Detected** | `usb_stick` in inventory | "Encrypted USB Detected" setup screen with DECRYPT & IMPORT button |
 | **Loading** | User clicked IMPORT | Animated loading bar ("Loading data clusters...") |
 | **SYSTEM HALT (Crash)** | Import complete | Red crash screen: "CRITICAL_STRUCTURAL_ERROR" |
@@ -84,7 +85,7 @@ The Detective Tablet is an in-game forensic tool that teaches First Normal Form 
 
 ### 5.3 Database Schema (Narrative Witness Reports)
 
-The database (`DEFAULT_DATA`) contains the initial police interview records from the USB stick. It is **intentionally non-atomic** to create the 1NF violation the player must fix.
+The database (`DEFAULT_DATA`) contains the initial police interview records from the USB stick found in the Crime Scene Bureau. It is **intentionally non-atomic** to create the 1NF violation the player must fix.
 
 | Log_ID | Subject (Hidden) | Observation (Corrupted) |
 | :--- | :--- | :--- |

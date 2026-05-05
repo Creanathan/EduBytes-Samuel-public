@@ -68,17 +68,16 @@ This document standardizes the narrative, characters, and investigative mechanic
 ### Logic Guards 
 *   **Crime Scene**: Locked until the Butler (Leduc) grants permission.
 *   **Nanny's Room**: Locked until the 1NF puzzle is solved and the key is recovered from the Piano.
-*   **Detective Tablet**: Starts in an empty state. Requires the player to find the **USB Stick** (at the Crime Scene) to import the case data.
+*   **Detective Tablet**: Starts in an empty state. Requires the player to find the **USB Stick** (at the Crime Scene Bureau) to import the case data.
 * **Upstairs**: Locked until Thomas Souvellier asks Louis if Louis has checked upstairs. --> Going up triggers titlescreen + credits
 
-### USB Stick & Database Keys
-* TBI **Crime Scene**: Knife ("knife" used as primary key for multiple entrees eg. type, where located in house, age of blood) --> indicator that you should use the USB stick.
-* TBI **Hallway**: Nothing.
-* TBI **Living room**: Current edit
-* TBI **Nursery**: Meerdere tabellen in één kolom (eg. 3 babies in kolom mensen)
-* TBI **Outside**: Nothing.
+### USB Stick & Data Normalization
+* **Crime Scene Bureau**: An encrypted USB stick is found on the desk. This is the primary data source for the investigation.
+* **Data Conflict**: The normalized data reveals that Beatrix (the Nanny) lied about her whereabouts.
 
 ### Educational Mechanic (1NF)
-*   **Problem**: Multiple entries (rooms) in single database cells.
+*   **Problem**: Multiple entries (locations) in single database cells.
 *   **Action**: Player must split cells to achieve **Atomicity**.
 *   **Payoff**: Reveals a contradiction in the Nanny's alibi. Log #002 says she was in the Nursery; Log #005 places her at the Piano.
+
+---
