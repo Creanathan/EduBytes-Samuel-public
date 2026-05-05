@@ -114,6 +114,27 @@ body {
     background: var(--accent-gold); border-radius: 0 4px 4px 0;
 }
 
+/* Locked/Revealed States */
+.nav-link.locked {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-reveal {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: scale(1) !important;
+    animation: unlock-glow 2s forwards;
+}
+
+@keyframes unlock-glow {
+    0% { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+    50% { filter: brightness(2) drop-shadow(0 0 15px var(--accent-gold)); }
+    100% { filter: brightness(1) drop-shadow(0 0 5px var(--accent-gold-glow)); }
+}
+
 /* MAIN VIEW */
 .view-container {
     flex: 1;

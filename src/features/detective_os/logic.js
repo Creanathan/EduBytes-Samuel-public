@@ -54,8 +54,8 @@ function checkSetup() {
     if (isUnlocked || isImported) {
         if (isUnlocked) {
             overlay.style.display = "none";
-            document.getElementById("nav-crossref").classList.remove("locked");
-            document.getElementById("nav-accusation").classList.remove("locked");
+            document.getElementById("nav-crossref").classList.add("nav-reveal");
+            document.getElementById("nav-accusation").classList.add("nav-reveal");
         } else {
             document.getElementById("setup-title").innerText = "INTEGRITY ERROR";
             importBtn.style.display = "none";
@@ -162,8 +162,8 @@ function checkWin() {
     if (currentStep === 2 && keys.includes("id") && keys.some(k => k.includes("observation")) && keys.length === 2) {
         isUnlocked = true;
         localStorage.setItem('Detective_os_unlocked', 'true');
-        document.getElementById("nav-crossref").classList.remove("locked");
-        document.getElementById("nav-accusation").classList.remove("locked");
+        document.getElementById("nav-crossref").classList.add("nav-reveal");
+        document.getElementById("nav-accusation").classList.add("nav-reveal");
         renderTable();
         renderSuspectProfiles();
         if (window !== window.parent) window.parent.postMessage({ type: 'normalization_complete' }, '*');
