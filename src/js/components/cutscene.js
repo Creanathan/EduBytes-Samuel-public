@@ -213,34 +213,33 @@ const CutsceneEngine = (() => {
         if (!audioCtx) return;
         const t = audioCtx.currentTime;
         
-        // Multiple oscillators to create a mechanical click sound
-        const osc1 = audioCtx.createOscillator();
-        const osc2 = audioCtx.createOscillator();
-        osc1.type = 'square';
-        osc2.type = 'triangle';
+        // Use a very short burst of noise for a realistic mechanical clack
+        const bufferSize = audioCtx.sampleRate * 0.05; // 50ms
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
         
-        // Randomize pitch slightly
-        const baseFreq = 500 + Math.random() * 300;
-        osc1.frequency.setValueAtTime(baseFreq, t);
-        osc2.frequency.setValueAtTime(baseFreq * 1.5, t);
-        
-        const g = audioCtx.createGain();
-        g.gain.setValueAtTime(0.04, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
         
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'bandpass';
-        filter.frequency.value = 1800;
+        // Randomize the bandpass frequency slightly for a different key click
+        filter.frequency.value = 1200 + Math.random() * 800;
         
-        osc1.connect(filter);
-        osc2.connect(filter);
+        const g = audioCtx.createGain();
+        // Make it loud enough to be clearly audible
+        g.gain.setValueAtTime(0.6, t);
+        g.gain.exponentialRampToValueAtTime(0.01, t + 0.04);
+        
+        noise.connect(filter);
         filter.connect(g);
         g.connect(audioCtx.destination);
         
-        osc1.start(t);
-        osc2.start(t);
-        osc1.stop(t + 0.04);
-        osc2.stop(t + 0.04);
+        noise.start(t);
+        noise.stop(t + 0.05);
     }
 
     /* ── Play a single slide ──────────────────── */
