@@ -344,7 +344,7 @@
                         <div class="tablet-lens"></div>
                     </div>
                     <iframe id="tablet-iframe" frameborder="0"></iframe>
-                    <div class="tablet-home-btn">
+                    <div class="tablet-home-btn" style="cursor: pointer;" onclick="window.TabletWidget.toggle()">
                         <div class="tablet-home-indicator"></div>
                     </div>
                 </div>
